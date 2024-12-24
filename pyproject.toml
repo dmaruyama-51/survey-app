@@ -4,12 +4,15 @@ version = "0.1.0"
 description = ""
 authors = ["dmaruyama-51 <0501awasuram@gmail.com>"]
 readme = "README.md"
+packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 pandas = "^2.2.3"
 streamlit = "^1.41.1"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
 
 [build-system]
 requires = ["poetry-core"]
