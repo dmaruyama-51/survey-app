@@ -1,3 +1,4 @@
+# pragma: no cover
 import streamlit as st
 import pandas as pd
 
@@ -16,3 +17,4 @@ else:
     df = pd.read_csv("src/data/sample.csv")
 
 st.write(df)
+# end pragma: no cover
