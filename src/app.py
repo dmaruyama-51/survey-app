@@ -1,8 +1,9 @@
+# pragma: no cover
 import streamlit as st
 import pandas as pd
 
 st.title("Survey Cleaning App")
-st.write("This app is used to clean survey data") 
+st.write("This app is used to clean survey data")
 
 
 st.markdown("## Step1. upload the survey data")
@@ -16,3 +17,4 @@ else:
     df = pd.read_csv("src/data/sample.csv")
 
 st.write(df)
+# end pragma: no cover
