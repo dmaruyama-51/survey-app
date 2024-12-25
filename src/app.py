@@ -21,12 +21,13 @@ def main():
         # Step2. Enter the data information
         # -----------------------------------
         st.markdown("### Step2. Enter the data information")
-        df_to_process, df_not_to_process= split_numeric_and_non_numeric_columns(df)
+        df_to_process, df_not_to_process = split_numeric_and_non_numeric_columns(df)
         likert_scale_case = select_likert_scale_points()
         st.write(likert_scale_case)
 
         is_all_numerical = (
-            df_to_process.select_dtypes(include=["number"]).shape[1] == df_to_process.shape[1]
+            df_to_process.select_dtypes(include=["number"]).shape[1]
+            == df_to_process.shape[1]
         )
         if not is_all_numerical:
             st.write("数値以外のカラムが含まれています。")
@@ -37,7 +38,9 @@ def main():
             # Step3. Select data cleaning requirements and download
             # -----------------------------------
             st.markdown("### Step3. Select data cleaning requirements and download")
-            process_data_cleaning_and_export(df_to_process, df_not_to_process, likert_scale_case)
+            process_data_cleaning_and_export(
+                df_to_process, df_not_to_process, likert_scale_case
+            )
 
 
 if __name__ == "__main__":

@@ -10,7 +10,9 @@ def test_remove_straight_line_responses():
     remove_rows = remove_straight_line_responses(df)
 
     # 検証
-    assert len(remove_rows) == 2  # ストレートライン回答（1, 2行目）が1つ検出されることを確認
+    assert (
+        len(remove_rows) == 2
+    )  # ストレートライン回答（1, 2行目）が1つ検出されることを確認
     assert remove_rows == [0, 1]  # 削除対象の行インデックスが正しいことを確認
 
 

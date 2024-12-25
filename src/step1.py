@@ -24,6 +24,7 @@ def load_survey_data() -> pd.DataFrame | None:
         df = None
     return df
 
+
 # pragma: no cover
 def display_data_summary(df: pd.DataFrame) -> None:
     """

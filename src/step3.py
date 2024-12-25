@@ -5,9 +5,7 @@ from typing import List
 
 # pragma: no cover
 def process_data_cleaning_and_export(
-    df_to_process: pd.DataFrame, 
-    df_not_to_process: pd.DataFrame,
-    likert_scale_case: int
+    df_to_process: pd.DataFrame, df_not_to_process: pd.DataFrame, likert_scale_case: int
 ) -> pd.DataFrame:
     """
     データクリーニングの要件を選択し、クリーニング後のデータをダウンロード可能にする
@@ -31,7 +29,7 @@ def process_data_cleaning_and_export(
         st.markdown("#### Download cleaned data")
         st.write(f"Process Completed. {len(remove_rows)} rows were removed.")
         st.write(removed_df)
-        
+
         csv = cleaned_df.to_csv(index=False)
         st.download_button(
             label="Download cleaned data",

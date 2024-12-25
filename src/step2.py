@@ -1,9 +1,12 @@
 import streamlit as st
 import pandas as pd
-from typing import Tuple, List
+from typing import Tuple
+
 
 # pragma: no cover
-def split_numeric_and_non_numeric_columns(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def split_numeric_and_non_numeric_columns(
+    df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     処理の対象外のカラムと、対象カラムとでデータフレームを分割する
     Args:
