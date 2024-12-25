@@ -25,7 +25,7 @@ def process_data_cleaning_and_export(
     cleaned_df = all_df.drop(index=remove_rows)
     removed_df = all_df.loc[remove_rows]
 
-    if not cleaned_df.empty and (req1 or req2 or req3):
+    if not cleaned_df.empty and any([req1, req2, req3]):
         st.markdown("#### Download cleaned data")
         st.write(f"Process Completed. {len(remove_rows)} rows were removed.")
         st.write(removed_df)
@@ -59,6 +59,9 @@ def remove_invalid_responses(
         if req1:
             req1_remove_rows = remove_straight_line_responses(df)
             remove_rows.extend(req1_remove_rows)
+        if req2:
+            req2_remove_rows = remove_missing_values(df)
+            remove_rows.extend(req2_remove_rows)
 
         return remove_rows
     except Exception as e:
@@ -78,5 +81,20 @@ def remove_straight_line_responses(df: pd.DataFrame) -> List[int]:
     remove_rows = straight_line_rows[straight_line_rows].index.tolist()
     if remove_rows:  # リストが空でない場合のみ表示
         st.write("以下の行番号にストレートライン回答が見つかりました:")
+        st.write(remove_rows)
+    return remove_rows
+
+
+def remove_missing_values(df: pd.DataFrame) -> List[int]:
+    """
+    欠損値を含む行番号を取得
+    Args:
+        df (pd.DataFrame): 入力データフレーム
+    Returns:
+        List[int]: 欠損値を含む行番号のリスト
+    """
+    remove_rows = df[df.isnull().any(axis=1)].index.tolist()
+    if remove_rows:  # リストが空でない場合のみ表示
+        st.write("以下の行番号に欠損値が見つかりました:")
         st.write(remove_rows)
     return remove_rows
