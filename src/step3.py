@@ -20,7 +20,9 @@ def process_data_cleaning_and_export(
     req2 = st.checkbox("Remove rows with missing values")
     req3 = st.checkbox("Remove rows with maximum or minimum value exceeds the default")
 
-    remove_rows = remove_invalid_responses(df_to_process, likert_scale_case, req1, req2, req3)
+    remove_rows = remove_invalid_responses(
+        df_to_process, likert_scale_case, req1, req2, req3
+    )
     all_df = pd.concat([df_not_to_process, df_to_process], axis=1)
     cleaned_df = all_df.drop(index=remove_rows)
     removed_df = all_df.loc[remove_rows]
@@ -102,6 +104,7 @@ def remove_missing_values(df: pd.DataFrame) -> List[int]:
         st.write("以下の行番号に欠損値が見つかりました:")
         st.write(remove_rows)
     return remove_rows
+
 
 def remove_out_of_range_values(df: pd.DataFrame, likert_scale_case: int) -> List[int]:
     """
