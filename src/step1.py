@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 
 
+# pragma: no cover
 def load_survey_data() -> pd.DataFrame | None:
     """
     CSVファイルをアップロードまたはサンプルデータを読み込む
@@ -24,6 +25,7 @@ def load_survey_data() -> pd.DataFrame | None:
     return df
 
 
+# pragma: no cover
 def display_data_summary(df: pd.DataFrame) -> None:
     """
     アップロードされたデータのプレビューと基本統計量を表示

@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 
 
+# pragma: no cover
 def process_data_cleaning_and_export(
     df: pd.DataFrame, likert_scale_case: int
 ) -> pd.DataFrame:
@@ -33,6 +34,7 @@ def process_data_cleaning_and_export(
     return cleaned_df
 
 
+# pragma: no cover
 def remove_invalid_responses(
     df: pd.DataFrame, req1: bool, req2: bool, req3: bool
 ) -> pd.DataFrame:

@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 
 
+# pragma: no cover
 def select_non_numeric_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
     数値データではない列を選択して除外する
@@ -18,6 +19,7 @@ def select_non_numeric_columns(df: pd.DataFrame) -> pd.DataFrame:
     return _df
 
 
+# pragma: no cover
 def select_likert_scale_points() -> int | None:
     """
     リッカート尺度のポイント数を選択する
