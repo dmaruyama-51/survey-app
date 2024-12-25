@@ -16,10 +16,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      PROJECT_ID: cloudrun-apps-445712
-      REGION: asia-northeast1
-      REPOSITORY_NAME: streamlit-app
-      APP_NAME: survey-app
+      PROJECT_ID: ${{ vars.PROJECT_ID }}
+      REGION: ${{ vars.REGION }}
+      REPOSITORY_NAME: ${{ vars.REPOSITORY_NAME }}
+      APP_NAME: ${{ vars.APP_NAME }}
 
     steps:
       - uses: actions/checkout@v4
