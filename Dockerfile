@@ -19,5 +19,7 @@ RUN poetry install --no-dev --no-interaction --no-ansi
 # アプリケーションのソースコードをコピー
 COPY src/ ./src/
 
+ENV PYTHONPATH=/app
+
 EXPOSE 8080
 CMD poetry run streamlit run src/app.py --server.port 8080 --server.address 0.0.0.0
