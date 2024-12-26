@@ -21,8 +21,12 @@ def process_data_cleaning_and_export(
         st.markdown("#### Select data cleaning requirements")
         req1 = st.checkbox("Remove straight lines")
         req2 = st.checkbox("Remove rows with missing values")
-        req3 = st.checkbox("Remove rows with maximum or minimum value exceeds the default")
-        logger.info(f"クリーニング要件選択: straight_lines={req1}, missing={req2}, out_of_range={req3}")
+        req3 = st.checkbox(
+            "Remove rows with maximum or minimum value exceeds the default"
+        )
+        logger.info(
+            f"クリーニング要件選択: straight_lines={req1}, missing={req2}, out_of_range={req3}"
+        )
 
         remove_rows = remove_invalid_responses(
             df_to_process, likert_scale_case, req1, req2, req3

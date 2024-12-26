@@ -24,10 +24,10 @@ def split_numeric_and_non_numeric_columns(
 
         df_to_process = df.drop(columns=remove_cols)
         df_not_to_process = df.loc[:, remove_cols]
-        
+
         logger.info(f"処理対象データ shape: {df_to_process.shape}")
         logger.info(f"除外データ shape: {df_not_to_process.shape}")
-        
+
         return df_to_process, df_not_to_process
     except Exception as e:
         logger.error(f"データフレーム分割エラー: {str(e)}")
