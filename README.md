@@ -40,7 +40,7 @@ This is a web application designed to clean social survey data collected using L
 
 2. **Run the Application**:
    ```bash
-   poetry runstreamlit run app.py
+   make dev
    ```
 
 3. **Linting and Formatting**:
