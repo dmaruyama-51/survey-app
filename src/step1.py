@@ -53,13 +53,16 @@ def display_data_summary(df: pd.DataFrame) -> None:
         logger.info("データプレビュー表示開始")
         st.markdown("#### Data Preview")
         # カスタムCSSで高さを制限
-        st.markdown("""
+        st.markdown(
+            """
             <style>
             .stDataFrame {
                 max-height: 250px;
             }
             </style>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
         st.dataframe(df, height=200)  # 高さを200pxに制限
     except Exception as e:
         logger.error(f"データプレビュー表示エラー: {str(e)}")
