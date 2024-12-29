@@ -10,7 +10,7 @@ This is a web application designed to clean social survey data collected using L
 1. **Straight-Line Response Removal**: Detects and removes responses where all answers have the same value.
 2. **Missing Values Removal**: Removes rows with missing values to ensure data integrity.
 3. **Out-of-Range Value Removal**: Filters out rows containing values outside the expected range (e.g., -1 or 100 in a 5-point scale).
-4. **[Planned] Sequential Pattern Detection**: Removes rows with sequential patterns (e.g., 1, 2, 3, 4, 5...).
+4. **Sequential Pattern Detection**: Removes rows with sequential patterns (e.g., 1, 2, 3, 4, 5...).
 
 ### Technical Features
 - **CSV File Upload**: Users can upload their survey data as a CSV file for cleaning.
@@ -20,16 +20,9 @@ This is a web application designed to clean social survey data collected using L
 
 ## Technical Stack
 
-### Programming Language
-- Python 3.11
-
-### Key Dependencies
-- **Streamlit**: Version 1.41.1 for creating the web interface.
-- **Pandas**: Version 2.2.3 for efficient data manipulation.
-- **Poetry**: For dependency management.
-- **Ruff**: For linting and formatting.
-- **pytest**: For testing.
-- **mypy**: For type checking.
+- Language: Python 3.11
+- UI Framework: Streamlit 1.41.1
+- Dependency Management: Poetry
 
 ## Development Setup
 
