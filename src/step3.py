@@ -15,11 +15,17 @@ def display_cleaning_options() -> tuple[bool, bool, bool, bool]:
     return req1, req2, req3, req4
 
 
-def initialize_cleaning_state(df_to_process: pd.DataFrame, df_not_to_process: pd.DataFrame, 
-                            likert_scale_case: int, reqs: tuple[bool, bool, bool, bool]) -> None:
+def initialize_cleaning_state(
+    df_to_process: pd.DataFrame,
+    df_not_to_process: pd.DataFrame,
+    likert_scale_case: int,
+    reqs: tuple[bool, bool, bool, bool],
+) -> None:
     """クリーニング処理の初期化と実行"""
     req1, req2, req3, req4 = reqs
-    remove_rows = remove_invalid_responses(df_to_process, likert_scale_case, req1, req2, req3, req4)
+    remove_rows = remove_invalid_responses(
+        df_to_process, likert_scale_case, req1, req2, req3, req4
+    )
     all_df = pd.concat([df_not_to_process, df_to_process], axis=1)
     st.session_state.cleaned_df = all_df.drop(index=remove_rows)
     st.session_state.removed_df = all_df.loc[remove_rows]
@@ -27,9 +33,9 @@ def initialize_cleaning_state(df_to_process: pd.DataFrame, df_not_to_process: pd
 
 def display_removed_records_editor() -> list:
     """削除されたレコードの編集UIを表示"""
-    if 'removed_df_with_checkbox' not in st.session_state:
+    if "removed_df_with_checkbox" not in st.session_state:
         st.session_state.removed_df_with_checkbox = st.session_state.removed_df.copy()
-        st.session_state.removed_df_with_checkbox.insert(0, 'Keep This Row', False)
+        st.session_state.removed_df_with_checkbox.insert(0, "Keep This Row", False)
         st.session_state.editor_key = 0
 
     edited_df = st.data_editor(
@@ -42,7 +48,7 @@ def display_removed_records_editor() -> list:
                 default=False,
             )
         },
-        key=f'removed_records_editor_{st.session_state.editor_key}'
+        key=f"removed_records_editor_{st.session_state.editor_key}",
     )
 
     if not edited_df.equals(st.session_state.removed_df_with_checkbox):
@@ -51,18 +57,19 @@ def display_removed_records_editor() -> list:
         st.rerun()
 
     return st.session_state.removed_df_with_checkbox[
-        st.session_state.removed_df_with_checkbox['Keep This Row']
+        st.session_state.removed_df_with_checkbox["Keep This Row"]
     ].index.tolist()
 
 
 def create_final_dataset(rows_to_keep: list) -> pd.DataFrame:
     """最終的なデータセットを作成"""
     if rows_to_keep:
-        final_cleaned_df = pd.concat([
-            st.session_state.cleaned_df, 
-            st.session_state.removed_df.loc[rows_to_keep]
-        ])
-        st.write(f"Final dataset will keep {len(rows_to_keep)} previously removed rows.")
+        final_cleaned_df = pd.concat(
+            [st.session_state.cleaned_df, st.session_state.removed_df.loc[rows_to_keep]]
+        )
+        st.write(
+            f"Final dataset will keep {len(rows_to_keep)} previously removed rows."
+        )
     else:
         final_cleaned_df = st.session_state.cleaned_df
     return final_cleaned_df
@@ -71,11 +78,11 @@ def create_final_dataset(rows_to_keep: list) -> pd.DataFrame:
 def reset_cleaning_state() -> None:
     """クリーニング関連の全セッション状態をリセット"""
     keys_to_remove = [
-        'cleaning_executed',
-        'cleaned_df',
-        'removed_df',
-        'removed_df_with_checkbox',
-        'editor_key'
+        "cleaning_executed",
+        "cleaned_df",
+        "removed_df",
+        "removed_df_with_checkbox",
+        "editor_key",
     ]
     for key in keys_to_remove:
         if key in st.session_state:
@@ -94,7 +101,7 @@ def process_data_cleaning_and_export(
         cleaning_reqs = display_cleaning_options()
 
         # セッション状態の初期化
-        if 'cleaning_executed' not in st.session_state:
+        if "cleaning_executed" not in st.session_state:
             st.session_state.cleaning_executed = False
 
         start_cleaning = st.button("Start Data Cleaning")
@@ -102,7 +109,7 @@ def process_data_cleaning_and_export(
         # クリーニング実行ボタンの処理
         if start_cleaning or st.session_state.cleaning_executed:
             st.session_state.cleaning_executed = True
-            
+
             if not any(cleaning_reqs):
                 st.warning("Please select at least one cleaning option.")
                 return df_to_process
@@ -114,14 +121,17 @@ def process_data_cleaning_and_export(
             )
 
             # 初回実行時のみクリーニングを実行
-            if 'cleaned_df' not in st.session_state:
-                initialize_cleaning_state(df_to_process, df_not_to_process, 
-                                       likert_scale_case, cleaning_reqs)
+            if "cleaned_df" not in st.session_state:
+                initialize_cleaning_state(
+                    df_to_process, df_not_to_process, likert_scale_case, cleaning_reqs
+                )
 
             if not st.session_state.cleaned_df.empty:
                 st.markdown("#### Cleaning Results and Download")
-                st.write("Below are the records marked for removal. Please check any rows you wish to keep. "
-                        "If no rows are selected, the downloaded data will exclude all records shown here.")
+                st.write(
+                    "Below are the records marked for removal. Please check any rows you wish to keep. "
+                    "If no rows are selected, the downloaded data will exclude all records shown here."
+                )
 
                 # 削除レコードの選択UI
                 rows_to_keep = display_removed_records_editor()
@@ -145,7 +155,9 @@ def process_data_cleaning_and_export(
                     )
                 return final_cleaned_df
             else:
-                st.warning("All rows have been removed. No data is available for download.")
+                st.warning(
+                    "All rows have been removed. No data is available for download."
+                )
 
         return df_to_process
 
@@ -155,7 +167,12 @@ def process_data_cleaning_and_export(
 
 
 def remove_invalid_responses(
-    df: pd.DataFrame, likert_scale_case: int, req1: bool, req2: bool, req3: bool, req4: bool
+    df: pd.DataFrame,
+    likert_scale_case: int,
+    req1: bool,
+    req2: bool,
+    req3: bool,
+    req4: bool,
 ) -> List[int]:
     """
     指定された要件に基づいて無効な回答の行番号を取得
@@ -282,58 +299,64 @@ def remove_step_pattern_responses(df: pd.DataFrame) -> List[int]:
                 continue
 
             # 差分を計算
-            diffs = [values[i+1] - values[i] for i in range(len(values)-1)]
-            
+            diffs = [values[i + 1] - values[i] for i in range(len(values) - 1)]
+
             # 単調増加または単調減少のパターンをチェック（同値を含まない）
             if all(d > 0 for d in diffs) or all(d < 0 for d in diffs):
                 remove_rows.append(idx)
                 continue
-            
+
             # 増加後減少または減少後増加のパターンをチェック
             peak_idx = None
             valley_idx = None
-            
+
             # ピークを探す（厳密な増加後減少）
-            for i in range(1, len(values)-1):
-                if all(values[j] < values[j+1] for j in range(i)) and \
-                   all(values[j] > values[j+1] for j in range(i, len(values)-1)):
+            for i in range(1, len(values) - 1):
+                if all(values[j] < values[j + 1] for j in range(i)) and all(
+                    values[j] > values[j + 1] for j in range(i, len(values) - 1)
+                ):
                     peak_idx = i
                     break
-            
+
             # 谷を探す（厳密な減少後増加）
-            for i in range(1, len(values)-1):
-                if all(values[j] > values[j+1] for j in range(i)) and \
-                   all(values[j] < values[j+1] for j in range(i, len(values)-1)):
+            for i in range(1, len(values) - 1):
+                if all(values[j] > values[j + 1] for j in range(i)) and all(
+                    values[j] < values[j + 1] for j in range(i, len(values) - 1)
+                ):
                     valley_idx = i
                     break
-            
+
             # 連続増加が途中で1に戻るパターンをチェック
             is_reset_pattern = False
             segments = []
             current_segment = [values[0]]
-            
+
             for i in range(1, len(values)):
-                if values[i] == 1 and i < len(values) - 1:  # 1に戻る点を検出（最後の要素は除く）
-                    if len(current_segment) > 1:  # セグメントが複数の要素を持つ場合のみ追加
+                if (
+                    values[i] == 1 and i < len(values) - 1
+                ):  # 1に戻る点を検出（最後の要素は除く）
+                    if (
+                        len(current_segment) > 1
+                    ):  # セグメントが複数の要素を持つ場合のみ追加
                         segments.append(current_segment)
                     current_segment = [values[i]]
                 else:
                     current_segment.append(values[i])
-            
+
             # 最後のセグメントを追加
             if len(current_segment) > 1:
                 segments.append(current_segment)
-            
+
             # 各セグメントが厳密な増加パターンかチェック
             if len(segments) > 0:
                 is_reset_pattern = all(
-                    all(seg[j] < seg[j+1] for j in range(len(seg)-1))
+                    all(seg[j] < seg[j + 1] for j in range(len(seg) - 1))
                     for seg in segments
                 )
-            
+
             if peak_idx is not None or valley_idx is not None or is_reset_pattern:
                 remove_rows.append(idx)
-        
+
         if remove_rows:
             logger.info(f"階段パターン検出: {remove_rows}")
         return remove_rows

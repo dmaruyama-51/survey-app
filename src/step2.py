@@ -43,9 +43,7 @@ def select_likert_scale_points() -> int | None:
     """
     try:
         likert_scale_case = st.selectbox(
-            "Select the number of Likert scale points",
-            (3, 4, 5, 6, 7, 8, 9),
-            index=4
+            "Select the number of Likert scale points", (3, 4, 5, 6, 7, 8, 9), index=4
         )
         st.info("Note: Sample data uses a 7-point Likert scale.")
         if likert_scale_case is not None:
