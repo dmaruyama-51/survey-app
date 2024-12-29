@@ -1,12 +1,10 @@
 # pragma: no cover
 import streamlit as st
-from src.step1 import load_survey_data, display_data_summary
-from src.step2 import (
-    split_numeric_and_non_numeric_columns,
-    select_likert_scale_points,
-    check_step2_completion,
-)
-from src.step3 import process_data_cleaning_and_export
+from src.interface.sections.step1 import render_file_upload_section
+from src.interface.sections.step2 import render_data_settings_section
+from src.interface.sections.step3 import process_data_cleaning_and_export
+from src.interface.components.data_summary import display_data_summary
+from src.interface.state import check_step2_completion
 from src.utils.logger_config import logger
 
 
@@ -45,7 +43,7 @@ def main():
             unsafe_allow_html=True,
         )
         try:
-            df = load_survey_data()
+            df = render_file_upload_section()
             if df is not None:
                 logger.info(f"データ読み込み完了 shape: {df.shape}")
                 display_data_summary(df)
@@ -65,8 +63,9 @@ def main():
             unsafe_allow_html=True,
         )
         try:
-            df_to_process, df_not_to_process = split_numeric_and_non_numeric_columns(df)
-            likert_scale = select_likert_scale_points()
+            df_to_process, df_not_to_process, likert_scale = (
+                render_data_settings_section(df)
+            )
 
             # Step 2の完了チェック
             step2_completed = check_step2_completion(
