@@ -50,12 +50,17 @@ def display_data_summary(df: pd.DataFrame) -> None:
         df (pd.DataFrame): 表示するデータフレーム
     """
     try:
-        logger.info("データサマリー表示開始")
+        logger.info("データプレビュー表示開始")
         st.markdown("#### Data Preview")
-        st.write(df)
-        st.markdown("#### Summary Statistics")
-        st.write(df.describe())
-        logger.info("データサマリー表示完了")
+        # カスタムCSSで高さを制限
+        st.markdown("""
+            <style>
+            .stDataFrame {
+                max-height: 250px;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+        st.dataframe(df, height=200)  # 高さを200pxに制限
     except Exception as e:
-        logger.error(f"データサマリー表示エラー: {str(e)}")
+        logger.error(f"データプレビュー表示エラー: {str(e)}")
         raise

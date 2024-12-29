@@ -152,6 +152,7 @@ def process_data_cleaning_and_export(
                         data=csv,
                         file_name="cleaned_survey_data.csv",
                         mime="text/csv",
+                        type="primary",
                     )
                 return final_cleaned_df
             else:
