@@ -16,7 +16,7 @@ def test_remove_straight_line_responses():
 
     # 検証
     assert len(remove_rows) == 2
-    assert remove_rows == [0, 1]  # 削除対象の行インデックスが正しいことを確認
+    assert remove_rows == [0, 1] 
 
 
 def test_remove_missing_values():
@@ -27,8 +27,8 @@ def test_remove_missing_values():
     remove_rows = remove_missing_values(df)
 
     # 検証
-    assert len(remove_rows) == 2  # 欠損値を含む行が2つ検出されることを確認
-    assert sorted(remove_rows) == [1, 2]  # 削除対象の行インデックスが正しいことを確認
+    assert len(remove_rows) == 2  
+    assert sorted(remove_rows) == [1, 2]
 
 
 def test_remove_out_of_range_values():
@@ -39,8 +39,8 @@ def test_remove_out_of_range_values():
     remove_rows = remove_out_of_range_values(df, likert_scale_case=7)
 
     # 検証
-    assert len(remove_rows) == 2  # 範囲外の値を含む行が2つ検出されることを確認
-    assert sorted(remove_rows) == [1, 3]  # 削除対象の行インデックスが正しいことを確認
+    assert len(remove_rows) == 2
+    assert sorted(remove_rows) == [1, 3]
 
 
 def test_remove_invalid_responses():
@@ -61,9 +61,9 @@ def test_remove_invalid_responses():
     )
 
     # 検証
-    assert len(remove_rows) == 3  # 3つの無効な回答が検出されることを確認
+    assert len(remove_rows) == 3  
     assert sorted(remove_rows) == [
         0,
         2,
         3,
-    ]  # 削除対象の行インデックスが正しいことを確認
+    ] 

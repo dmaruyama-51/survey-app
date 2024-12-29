@@ -18,7 +18,7 @@ def display_data_summary(df: pd.DataFrame) -> None:
             st.write(f"Number of columns: {df.shape[1]}")
 
         st.write("First few rows of the data:")
-        st.dataframe(df.head(), use_container_width=True)
+        st.dataframe(df, use_container_width=True)
 
     except Exception as e:
         logger.error(f"データサマリー表示エラー: {str(e)}")
