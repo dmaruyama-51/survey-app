@@ -9,13 +9,13 @@ from src.utils.logger_config import logger
 def main():
     try:
         logger.info("アプリケーション開始")
-        st.title("Survey Cleaning App")
-        st.write("This app is used to clean survey data")
+        st.title("Survey Data Cleaning Tool")
+        st.write("Clean and process your survey data with ease")
 
         # -----------------------------------
         # Step1. upload the survey data
         # -----------------------------------
-        st.markdown("### Step1. upload the survey data")
+        st.markdown("### Step 1: Upload Survey Data")
         try:
             df = load_survey_data()
             if df is not None:
@@ -32,7 +32,7 @@ def main():
         # -----------------------------------
         # Step2. Enter the data information
         # -----------------------------------
-        st.markdown("### Step2. Enter the data information")
+        st.markdown("### Step 2: Configure Data Settings")
         try:
             df_to_process, df_not_to_process = split_numeric_and_non_numeric_columns(df)
             likert_scale_case = select_likert_scale_points()
@@ -55,7 +55,7 @@ def main():
             # -----------------------------------
             # Step3. Select data cleaning requirements and download
             # -----------------------------------
-            st.markdown("### Step3. Select data cleaning requirements and download")
+            st.markdown("### Step 3: Clean Data and Download Results")
             try:
                 logger.info("クリーニング開始")
                 process_data_cleaning_and_export(

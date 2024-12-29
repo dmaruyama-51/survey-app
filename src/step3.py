@@ -18,11 +18,11 @@ def process_data_cleaning_and_export(
         pd.DataFrame: クリーニング済みのデータフレーム
     """
     try:
-        st.markdown("#### Select data cleaning requirements")
-        req1 = st.checkbox("Remove straight lines")
-        req2 = st.checkbox("Remove rows with missing values")
+        st.markdown("#### Data Cleaning Options")
+        req1 = st.checkbox("Remove straight-line responses")
+        req2 = st.checkbox("Remove responses with missing values")
         req3 = st.checkbox(
-            "Remove rows with maximum or minimum value exceeds the default"
+            "Remove responses outside of valid range"
         )
         logger.info(
             f"クリーニング要件選択: straight_lines={req1}, missing={req2}, out_of_range={req3}"
@@ -37,13 +37,13 @@ def process_data_cleaning_and_export(
 
         if not cleaned_df.empty and any([req1, req2, req3]):
             logger.info(f"削除行数: {len(remove_rows)}")
-            st.markdown("#### Download cleaned data")
-            st.write(f"Process Completed. {len(remove_rows)} rows were removed.")
+            st.markdown("#### Download Cleaned Data")
+            st.write(f"Cleaning complete: {len(remove_rows)} rows removed.")
             st.write(removed_df)
 
             csv = cleaned_df.to_csv(index=False)
             st.download_button(
-                label="Download cleaned data",
+                label="Download Cleaned Data",
                 data=csv,
                 file_name="cleaned_survey_data.csv",
                 mime="text/csv",
@@ -106,7 +106,7 @@ def remove_straight_line_responses(df: pd.DataFrame) -> List[int]:
         remove_rows = straight_line_rows[straight_line_rows].index.tolist()
         if remove_rows:
             logger.info(f"ストレートライン検出: {remove_rows}")
-            st.write("以下の行番号にストレートライン回答が見つかりました:")
+            st.write("Straight-line responses found in the following rows:")
             st.write(remove_rows)
         return remove_rows
 
@@ -127,7 +127,7 @@ def remove_missing_values(df: pd.DataFrame) -> List[int]:
         remove_rows = df[df.isnull().any(axis=1)].index.tolist()
         if remove_rows:
             logger.info(f"欠損値検出: {remove_rows}")
-            st.write("以下の行番号に欠損値が見つかりました:")
+            st.write("Missing values found in the following rows:")
             st.write(remove_rows)
         return remove_rows
 
@@ -151,7 +151,7 @@ def remove_out_of_range_values(df: pd.DataFrame, likert_scale_case: int) -> List
         remove_rows = remove_rows_over + remove_rows_under
         if remove_rows:
             logger.info(f"範囲外値検出: {remove_rows}")
-            st.write("以下の行番号に規定値の範囲外の値が見つかりました:")
+            st.write("Values outside valid range found in the following rows:")
             st.write(remove_rows)
         return remove_rows
 

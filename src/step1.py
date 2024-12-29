@@ -13,9 +13,9 @@ def load_survey_data() -> Optional[pd.DataFrame]:
         pd.DataFrame | None: 読み込んだデータフレーム、またはNone
     """
     try:
-        uploaded_file = st.file_uploader("Please upload the survey data", type=["csv"])
+        uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
 
-        is_use_sample_data = st.checkbox("Use sample data")
+        is_use_sample_data = st.checkbox("Try with sample data")
         if is_use_sample_data:
             logger.info("サンプルデータ使用")
             try:
@@ -51,9 +51,9 @@ def display_data_summary(df: pd.DataFrame) -> None:
     """
     try:
         logger.info("データサマリー表示開始")
-        st.markdown("#### preview uploaded data")
+        st.markdown("#### Data Preview")
         st.write(df)
-        st.markdown("#### basic statistics")
+        st.markdown("#### Summary Statistics")
         st.write(df.describe())
         logger.info("データサマリー表示完了")
     except Exception as e:

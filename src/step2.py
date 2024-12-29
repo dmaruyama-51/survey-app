@@ -18,7 +18,7 @@ def split_numeric_and_non_numeric_columns(
     """
     try:
         remove_cols: list[str] = st.multiselect(
-            "Which column is not a numerical answer?", df.columns
+            "Select non-numeric columns to exclude", df.columns
         )
         logger.info(f"除外カラム選択: {remove_cols}")
 
@@ -43,8 +43,11 @@ def select_likert_scale_points() -> int | None:
     """
     try:
         likert_scale_case = st.selectbox(
-            "Which case is Likert scale?", (3, 4, 5, 6, 7, 8, 9), index=None
+            "Select the number of Likert scale points",
+            (3, 4, 5, 6, 7, 8, 9),
+            index=4
         )
+        st.info("Note: Sample data uses a 7-point Likert scale.")
         if likert_scale_case is not None:
             logger.info(f"リッカート尺度ポイント選択: {likert_scale_case}")
         else:
