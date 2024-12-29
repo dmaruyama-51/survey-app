@@ -5,107 +5,148 @@ from src.utils.logger_config import logger
 
 
 # pragma: no cover
+def display_cleaning_options() -> tuple[bool, bool, bool, bool]:
+    """データクリーニングのオプションを表示し、選択状態を返す"""
+    st.markdown("#### Data Cleaning Options")
+    req1 = st.checkbox("Remove straight-line responses")
+    req2 = st.checkbox("Remove responses with missing values")
+    req3 = st.checkbox("Remove responses outside of valid range")
+    req4 = st.checkbox("Remove step pattern responses")
+    return req1, req2, req3, req4
+
+
+def initialize_cleaning_state(df_to_process: pd.DataFrame, df_not_to_process: pd.DataFrame, 
+                            likert_scale_case: int, reqs: tuple[bool, bool, bool, bool]) -> None:
+    """クリーニング処理の初期化と実行"""
+    req1, req2, req3, req4 = reqs
+    remove_rows = remove_invalid_responses(df_to_process, likert_scale_case, req1, req2, req3, req4)
+    all_df = pd.concat([df_not_to_process, df_to_process], axis=1)
+    st.session_state.cleaned_df = all_df.drop(index=remove_rows)
+    st.session_state.removed_df = all_df.loc[remove_rows]
+
+
+def display_removed_records_editor() -> list:
+    """削除されたレコードの編集UIを表示"""
+    if 'removed_df_with_checkbox' not in st.session_state:
+        st.session_state.removed_df_with_checkbox = st.session_state.removed_df.copy()
+        st.session_state.removed_df_with_checkbox.insert(0, 'Keep This Row', False)
+        st.session_state.editor_key = 0
+
+    edited_df = st.data_editor(
+        st.session_state.removed_df_with_checkbox,
+        hide_index=True,
+        column_config={
+            "Keep This Row": st.column_config.CheckboxColumn(
+                "Keep This Row",
+                help="Select to keep this row in the final dataset",
+                default=False,
+            )
+        },
+        key=f'removed_records_editor_{st.session_state.editor_key}'
+    )
+
+    if not edited_df.equals(st.session_state.removed_df_with_checkbox):
+        st.session_state.removed_df_with_checkbox = edited_df.copy()
+        st.session_state.editor_key += 1
+        st.rerun()
+
+    return st.session_state.removed_df_with_checkbox[
+        st.session_state.removed_df_with_checkbox['Keep This Row']
+    ].index.tolist()
+
+
+def create_final_dataset(rows_to_keep: list) -> pd.DataFrame:
+    """最終的なデータセットを作成"""
+    if rows_to_keep:
+        final_cleaned_df = pd.concat([
+            st.session_state.cleaned_df, 
+            st.session_state.removed_df.loc[rows_to_keep]
+        ])
+        st.write(f"Final dataset will keep {len(rows_to_keep)} previously removed rows.")
+    else:
+        final_cleaned_df = st.session_state.cleaned_df
+    return final_cleaned_df
+
+
+def reset_cleaning_state() -> None:
+    """クリーニング関連の全セッション状態をリセット"""
+    keys_to_remove = [
+        'cleaning_executed',
+        'cleaned_df',
+        'removed_df',
+        'removed_df_with_checkbox',
+        'editor_key'
+    ]
+    for key in keys_to_remove:
+        if key in st.session_state:
+            del st.session_state[key]
+
+
 def process_data_cleaning_and_export(
     df_to_process: pd.DataFrame, df_not_to_process: pd.DataFrame, likert_scale_case: int
 ) -> pd.DataFrame:
     """
     データクリーニングの要件を選択し、実行ボタンクリック後にクリーニングを実施、
     クリーニング後のデータをダウンロード可能にする
-
-    Args:
-        df_to_process (pd.DataFrame): 処理対象のデータフレーム
-        df_not_to_process (pd.DataFrame): 処理対象外のデータフレーム
-        likert_scale_case (int): リッカート尺度のポイント数
-
-    Returns:
-        pd.DataFrame: クリーニング実行ボタンがクリックされた場合はクリーニング済みのデータフレーム、
-                     クリックされていない場合は元のデータフレーム
     """
     try:
-        st.markdown("#### Data Cleaning Options")
-        req1 = st.checkbox("Remove straight-line responses")
-        req2 = st.checkbox("Remove responses with missing values")
-        req3 = st.checkbox("Remove responses outside of valid range")
-        req4 = st.checkbox("Remove step pattern responses")
-        
+        # クリーニングオプションの表示
+        cleaning_reqs = display_cleaning_options()
+
         # セッション状態の初期化
         if 'cleaning_executed' not in st.session_state:
             st.session_state.cleaning_executed = False
-            
-        # クリーニング実行ボタンを追加
-        if st.button("Start Data Cleaning") or st.session_state.cleaning_executed:
+
+        start_cleaning = st.button("Start Data Cleaning")
+
+        # クリーニング実行ボタンの処理
+        if start_cleaning or st.session_state.cleaning_executed:
             st.session_state.cleaning_executed = True
-            # チェックボックスの選択状態を確認
-            if not any([req1, req2, req3, req4]):
+            
+            if not any(cleaning_reqs):
                 st.warning("Please select at least one cleaning option.")
                 return df_to_process
-                
+
             logger.info(
-                f"クリーニング要件選択: straight_lines={req1}, missing={req2}, out_of_range={req3}, step_pattern={req4}"
+                f"クリーニング要件選択: straight_lines={cleaning_reqs[0]}, "
+                f"missing={cleaning_reqs[1]}, out_of_range={cleaning_reqs[2]}, "
+                f"step_pattern={cleaning_reqs[3]}"
             )
 
             # 初回実行時のみクリーニングを実行
             if 'cleaned_df' not in st.session_state:
-                remove_rows = remove_invalid_responses(
-                    df_to_process, likert_scale_case, req1, req2, req3, req4
-                )
-                all_df = pd.concat([df_not_to_process, df_to_process], axis=1)
-                st.session_state.cleaned_df = all_df.drop(index=remove_rows)
-                st.session_state.removed_df = all_df.loc[remove_rows]
+                initialize_cleaning_state(df_to_process, df_not_to_process, 
+                                       likert_scale_case, cleaning_reqs)
 
             if not st.session_state.cleaned_df.empty:
                 st.markdown("#### Cleaning Results and Download")
-                st.write("Below are the records marked for removal. Please check any rows you wish to keep. If no rows are selected, the downloaded data will exclude all records shown here.")
-                
-                # 削除レコードの選択UI用のデータフレーム初期化
-                if 'removed_df_with_checkbox' not in st.session_state:
-                    st.session_state.removed_df_with_checkbox = st.session_state.removed_df.copy()
-                    st.session_state.removed_df_with_checkbox.insert(0, 'Keep This Row', False)
-                    st.session_state.editor_key = 0
-                
+                st.write("Below are the records marked for removal. Please check any rows you wish to keep. "
+                        "If no rows are selected, the downloaded data will exclude all records shown here.")
+
                 # 削除レコードの選択UI
-                edited_df = st.data_editor(
-                    st.session_state.removed_df_with_checkbox,
-                    hide_index=True,
-                    column_config={
-                        "Keep This Row": st.column_config.CheckboxColumn(
-                            "Keep This Row",
-                            help="Select to keep this row in the final dataset",
-                            default=False,
-                        )
-                    },
-                    key=f'removed_records_editor_{st.session_state.editor_key}'
-                )
-                
-                # 変更があった場合、キーを更新して再レンダリングを強制
-                if not edited_df.equals(st.session_state.removed_df_with_checkbox):
-                    st.session_state.removed_df_with_checkbox = edited_df.copy()
-                    st.session_state.editor_key += 1
-                    st.rerun()
+                rows_to_keep = display_removed_records_editor()
 
-                # 保持するように選択された行を特定
-                rows_to_keep = st.session_state.removed_df_with_checkbox[
-                    st.session_state.removed_df_with_checkbox['Keep This Row']
-                ].index.tolist()
-                
-                if rows_to_keep:
-                    # 選択された行を削除対象から除外
-                    final_cleaned_df = pd.concat([st.session_state.cleaned_df, st.session_state.removed_df.loc[rows_to_keep]])
-                    st.write(f"You have chosen to retain {len(rows_to_keep)} rows in the final dataset.")
-                else:
-                    final_cleaned_df = st.session_state.cleaned_df
+                # 最終データセットの作成
+                final_cleaned_df = create_final_dataset(rows_to_keep)
 
-                csv = final_cleaned_df.to_csv(index=False)
-                st.download_button(
-                    label="Download Cleaned Data",
-                    data=csv,
-                    file_name="cleaned_survey_data.csv",
-                    mime="text/csv",
-                )
+                # リセットボタンとダウンロードボタンの表示
+                col1, col2 = st.columns([1, 4])
+                with col1:
+                    if st.button("Reset Cleaning Process"):
+                        reset_cleaning_state()
+                        st.rerun()
+                with col2:
+                    csv = final_cleaned_df.to_csv(index=False)
+                    st.download_button(
+                        label="Download Cleaned Data",
+                        data=csv,
+                        file_name="cleaned_survey_data.csv",
+                        mime="text/csv",
+                    )
                 return final_cleaned_df
             else:
                 st.warning("All rows have been removed. No data is available for download.")
-        
+
         return df_to_process
 
     except Exception as e:
