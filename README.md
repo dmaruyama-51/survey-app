@@ -1,37 +1,74 @@
-# Survey App
+# Survey Data Cleaning App
 
 ## Description
 
-リッカート尺度で取得した社会調査データを統計処理にかける前にクリーニングするアプリ
-以下の処理に対応（予定）
+This is a web application designed to clean social survey data collected using Likert scales. Built with Streamlit and Python, the application offers intuitive, user-friendly tools for handling common data issues in survey research. The application is deployed on Google Cloud Run, ensuring scalability and ease of access for users.
 
-- ストレートラインの除去（全部同一値の回答）
-- 欠損値を含む行の除去
-- 異常値を含む行の除去（例えば5件法で -1 や 100 といった値）
-- 階段回答の除去（1, 2, 3, 4, 5... といった回答）
+## Features
 
+### Data Cleaning Operations
+1. **Straight-Line Response Removal**: Detects and removes responses where all answers have the same value.
+2. **Missing Values Removal**: Removes rows with missing values to ensure data integrity.
+3. **Out-of-Range Value Removal**: Filters out rows containing values outside the expected range (e.g., -1 or 100 in a 5-point scale).
+4. **[Planned] Sequential Pattern Detection**: Removes rows with sequential patterns (e.g., 1, 2, 3, 4, 5...).
 
-## Setup
+### Technical Features
+- **CSV File Upload**: Users can upload their survey data as a CSV file for cleaning.
+- **Sample Data**: Sample datasets are available for testing the application.
+- **Likert Scale Support**: Supports a wide range of Likert scale points (3-9).
+- **Download Cleaned Data**: Enables users to download the cleaned data as a CSV file.
 
-```bash
-# 必要なパッケージのインストール
-poetry install
+## Technical Stack
 
-# local環境で起動
-poetry run streamlit run src/app.py
-```
+### Programming Language
+- Python 3.11
 
+### Key Dependencies
+- **Streamlit**: Version 1.41.1 for creating the web interface.
+- **Pandas**: Version 2.2.3 for efficient data manipulation.
+- **Poetry**: For dependency management.
+- **Ruff**: For linting and formatting.
+- **pytest**: For testing.
+- **mypy**: For type checking.
 
-## Deploy
+## Development Setup
 
-Deployは main ブランチへの push 時に Github Actions で自動実行される。
+1. **Install Dependencies**:
+   ```bash
+   poetry install
+   ```
 
-以下の用意が必要
-- Github Actions の環境変数に以下を登録
-    - PROJECT_ID: GCPのプロジェクトID
-    - REGION: GCPのリージョン
-    - REPOSITORY_NAME: Artifact Registryのリポジトリ名
-    - APP_NAME: Cloud Runのサービス名
-- Github Actions の Secrets に以下を登録
-    - WORKLOAD_IDENTITY_PROVIDER: Workload Identity Providerの値
-    - SERVICE_ACCOUNT: サービスアカウントのメールアドレス
+2. **Run the Application**:
+   ```bash
+   make dev
+   ```
+
+3. **Linting and Formatting**:
+   ```bash
+   make lint
+   make format
+   ```
+
+4. **Run Tests**:
+   ```bash
+   make test
+   ```
+
+### CI/CD
+GitHub Actions are used for continuous integration and deployment:
+- **PR Checks**: Runs tests, linting, and coverage checks on pull requests.
+- **Deploy**: Deploys the latest changes to Artifact Regustrt and Cloud Run upon merging.
+
+### Pre-requisites for Deployment
+
+Before deploying via GitHub Actions, ensure the following environment variables and secrets are registered:
+
+#### Environment Variables (GitHub Actions)
+- `PROJECT_ID`: GCP Project ID.
+- `REGION`: GCP Region.
+- `REPOSITORY_NAME`: Artifact Registry repository name.
+- `APP_NAME`: Cloud Run service name.
+
+#### Secrets (GitHub Actions)
+- `WORKLOAD_IDENTITY_PROVIDER`: Value for the Workload Identity Provider.
+- `SERVICE_ACCOUNT`: Email address of the service account.

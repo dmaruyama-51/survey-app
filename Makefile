@@ -12,6 +12,9 @@ lint:
 format: 
 	${POETRY_RUN} ruff format .
 
+dev:
+	${POETRY_RUN} streamlit run src/app.py
+
 all: test lint format
 
-.PHONY: test lint format all
+.PHONY: test lint format all dev
