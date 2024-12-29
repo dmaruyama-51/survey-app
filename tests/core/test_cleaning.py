@@ -16,7 +16,7 @@ def test_remove_straight_line_responses():
 
     # 検証
     assert len(remove_rows) == 2
-    assert remove_rows == [0, 1] 
+    assert remove_rows == [0, 1]
 
 
 def test_remove_missing_values():
@@ -27,7 +27,7 @@ def test_remove_missing_values():
     remove_rows = remove_missing_values(df)
 
     # 検証
-    assert len(remove_rows) == 2  
+    assert len(remove_rows) == 2
     assert sorted(remove_rows) == [1, 2]
 
 
@@ -61,9 +61,9 @@ def test_remove_invalid_responses():
     )
 
     # 検証
-    assert len(remove_rows) == 3  
+    assert len(remove_rows) == 3
     assert sorted(remove_rows) == [
         0,
         2,
         3,
-    ] 
+    ]
