@@ -37,6 +37,6 @@ def render_file_upload_section() -> pd.DataFrame | None:
         return None
 
     except Exception as e:
-        logger.error(f"ファイルアップロードエラー: {str(e)}")
-        st.error("ファイルのアップロード中にエラーが発生しました。")
+        logger.error(f"File upload error: {str(e)}")
+        st.error("An error occurred while uploading the file.")
         return None

@@ -19,6 +19,6 @@ def render_data_settings_section(
         return df_to_process, df_not_to_process, likert_scale
 
     except Exception as e:
-        logger.error(f"データ設定エラー: {str(e)}")
-        st.error("データ設定の処理中にエラーが発生しました。")
+        logger.error(f"Data settings error: {str(e)}")
+        st.error("An error occurred while configuring data settings.")
         raise

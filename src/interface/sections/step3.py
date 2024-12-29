@@ -29,7 +29,7 @@ def process_data_cleaning_and_export(
                 return df_to_process
 
             logger.info(
-                f"クリーニング要件選択: straight_lines={cleaning_reqs[0]}, "
+                f"Selected cleaning options: straight_lines={cleaning_reqs[0]}, "
                 f"missing={cleaning_reqs[1]}, out_of_range={cleaning_reqs[2]}, "
                 f"step_pattern={cleaning_reqs[3]}"
             )
@@ -77,5 +77,5 @@ def process_data_cleaning_and_export(
         return df_to_process
 
     except Exception as e:
-        logger.error(f"データクリーニング処理エラー: {str(e)}")
+        logger.error(f"Data cleaning error: {str(e)}")
         raise

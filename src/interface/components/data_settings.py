@@ -25,7 +25,7 @@ def render_column_selection(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFram
         return split_dataframe(df, remove_cols)
 
     except Exception as e:
-        logger.error(f"カラム選択エラー: {str(e)}")
+        logger.error(f"Column selection error: {str(e)}")
         raise
 
 
@@ -48,5 +48,5 @@ def render_likert_scale_selection() -> int:
         )
 
     except Exception as e:
-        logger.error(f"リッカート尺度選択エラー: {str(e)}")
+        logger.error(f"Likert scale selection error: {str(e)}")
         raise

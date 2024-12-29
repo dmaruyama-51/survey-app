@@ -26,8 +26,8 @@ def load_and_validate_csv(file) -> pd.DataFrame | None:
         return df
 
     except Exception as e:
-        logger.error(f"CSVファイル読み込みエラー: {str(e)}")
-        st.error("CSVファイルの読み込み中にエラーが発生しました。")
+        logger.error(f"CSV file loading error: {str(e)}")
+        st.error("An error occurred while reading the CSV file.")
         return None
 
 
@@ -39,15 +39,15 @@ def load_sample_data() -> pd.DataFrame | None:
         sample_path = root_dir / "src" / "core" / "data" / "sample.csv"
 
         if not sample_path.exists():
-            logger.error(f"サンプルデータファイルが見つかりません: {sample_path}")
-            st.error("サンプルデータファイルが見つかりません。")
+            logger.error(f"Sample data file not found: {sample_path}")
+            st.error("Sample data file not found.")
             return None
 
         df = pd.read_csv(sample_path)
-        logger.info(f"サンプルデータ読み込み完了 shape: {df.shape}")
+        logger.info(f"Sample data loaded successfully. Shape: {df.shape}")
         return df
 
     except Exception as e:
-        logger.error(f"サンプルデータ読み込みエラー: {str(e)}")
-        st.error("サンプルデータの読み込み中にエラーが発生しました。")
+        logger.error(f"Sample data loading error: {str(e)}")
+        st.error("An error occurred while loading the sample data.")
         return None

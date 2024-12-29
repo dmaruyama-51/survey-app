@@ -15,11 +15,11 @@ def remove_straight_line_responses(df: pd.DataFrame) -> List[int]:
         straight_line_rows = df.std(axis=1) == 0
         remove_rows = straight_line_rows[straight_line_rows].index.tolist()
         if remove_rows:
-            logger.info(f"ストレートライン検出: {remove_rows}")
+            logger.info(f"Straight-line responses detected: {remove_rows}")
         return remove_rows
 
     except Exception as e:
-        logger.error(f"ストレートライン検出エラー: {str(e)}")
+        logger.error(f"Error detecting straight-line responses: {str(e)}")
         raise
 
 
@@ -34,11 +34,11 @@ def remove_missing_values(df: pd.DataFrame) -> List[int]:
     try:
         remove_rows = df[df.isnull().any(axis=1)].index.tolist()
         if remove_rows:
-            logger.info(f"欠損値検出: {remove_rows}")
+            logger.info(f"Missing values detected: {remove_rows}")
         return remove_rows
 
     except Exception as e:
-        logger.error(f"欠損値検出エラー: {str(e)}")
+        logger.error(f"Error detecting missing values: {str(e)}")
         raise
 
 
@@ -56,11 +56,11 @@ def remove_out_of_range_values(df: pd.DataFrame, likert_scale_case: int) -> List
         remove_rows_under = df[df.min(axis=1) < 1].index.tolist()
         remove_rows = remove_rows_over + remove_rows_under
         if remove_rows:
-            logger.info(f"範囲外値検出: {remove_rows}")
+            logger.info(f"Out-of-range values detected: {remove_rows}")
         return remove_rows
 
     except Exception as e:
-        logger.error(f"範囲外値検出エラー: {str(e)}")
+        logger.error(f"Error detecting out-of-range values: {str(e)}")
         raise
 
 
@@ -120,22 +120,16 @@ def remove_step_pattern_responses(df: pd.DataFrame) -> List[int]:
             current_segment = [values[0]]
 
             for i in range(1, len(values)):
-                if (
-                    values[i] == 1 and i < len(values) - 1
-                ):  # 1に戻る点を検出（最後の要素は除く）
-                    if (
-                        len(current_segment) > 1
-                    ):  # セグメントが複数の要素を持つ場合のみ追加
+                if values[i] == 1 and i < len(values) - 1:
+                    if len(current_segment) > 1:
                         segments.append(current_segment)
                     current_segment = [values[i]]
                 else:
                     current_segment.append(values[i])
 
-            # 最後のセグメントを追加
             if len(current_segment) > 1:
                 segments.append(current_segment)
 
-            # 各セグメントが厳密な増加パターンかチェック
             if len(segments) > 0:
                 is_reset_pattern = all(
                     all(seg[j] < seg[j + 1] for j in range(len(seg) - 1))
@@ -146,11 +140,11 @@ def remove_step_pattern_responses(df: pd.DataFrame) -> List[int]:
                 remove_rows.append(idx)
 
         if remove_rows:
-            logger.info(f"階段パターン検出: {remove_rows}")
+            logger.info(f"Step pattern responses detected: {remove_rows}")
         return remove_rows
 
     except Exception as e:
-        logger.error(f"階段パターン検出エラー: {str(e)}")
+        logger.error(f"Error detecting step pattern responses: {str(e)}")
         raise
 
 
@@ -180,9 +174,9 @@ def remove_invalid_responses(
 
         # 重複を除去
         remove_rows = list(set(remove_rows))
-        logger.info(f"合計 {len(remove_rows)} 行の無効な回答を検出")
+        logger.info(f"Total {len(remove_rows)} invalid responses detected")
         return remove_rows
 
     except Exception as e:
-        logger.error(f"無効な回答の検出でエラー: {str(e)}")
+        logger.error(f"Error detecting invalid responses: {str(e)}")
         raise

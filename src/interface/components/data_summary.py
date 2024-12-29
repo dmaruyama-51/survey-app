@@ -17,9 +17,9 @@ def display_data_summary(df: pd.DataFrame) -> None:
         with col2:
             st.write(f"Number of columns: {df.shape[1]}")
 
-        st.write("First few rows of the data:")
+        st.write("Data content:")
         st.dataframe(df, use_container_width=True)
 
     except Exception as e:
-        logger.error(f"データサマリー表示エラー: {str(e)}")
-        st.error("データの表示中にエラーが発生しました。")
+        logger.error(f"Error displaying data summary: {str(e)}")
+        st.error("An error occurred while displaying the data.")
