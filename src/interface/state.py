@@ -43,6 +43,20 @@ def check_step2_completion(remove_cols: list[str], likert_scale: int | None) -> 
     return True
 
 
+def check_step1_completion(df: pd.DataFrame | None) -> bool:
+    """
+    Step1の要件が満たされているかチェックする
+    Args:
+        df (pd.DataFrame | None): アップロードされたデータフレーム
+    Returns:
+        bool: 要件を満たしているかどうか
+    """
+    if df is None:
+        st.info("Please upload a CSV file or use sample data to proceed.", icon="ℹ️")
+        return False
+    return True
+
+
 def reset_cleaning_state() -> None:
     """クリーニング関連の全セッション状態をリセット"""
     keys_to_remove = [

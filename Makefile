@@ -13,7 +13,7 @@ format:
 	${POETRY_RUN} ruff format .
 
 dev:
-	${POETRY_RUN} streamlit run src/app.py
+	${POETRY_RUN} streamlit run src/home.py
 
 all: test lint format
 
