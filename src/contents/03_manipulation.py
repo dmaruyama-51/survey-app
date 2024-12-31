@@ -1,9 +1,9 @@
 import streamlit as st
-from src.interface.sections.file_upload import render_file_upload_section
-from src.interface.sections.manipulation_settings import (
+from src.interface.page_common.file_upload import render_file_upload_section
+from src.interface.page_manipulation.settings import (
     render_manipulation_settings_section,
 )
-from src.interface.sections.manipulation_preview import (
+from src.interface.page_manipulation.preview import (
     render_manipulation_preview_section,
 )
 from src.interface.components.data_summary import display_data_summary
