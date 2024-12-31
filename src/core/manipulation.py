@@ -30,3 +30,26 @@ def prepare_download_data(
             download_df[f"{col}_r"] = reversed_df[f"{col}_r"]
         return download_df
     return reversed_df
+
+
+def calculate_scale_scores(
+    df: pd.DataFrame,
+    scale_columns: List[str],
+    scale_name: str,
+) -> pd.DataFrame:
+    """
+    指定された列の合計得点と平均得点を計算する
+
+    Args:
+        df (pd.DataFrame): 入力データフレーム
+        scale_columns (List[str]): 因子を構成する項目のリスト
+        scale_name (str): 因子の名前
+    Returns:
+        pd.DataFrame: 合計得点と平均得点が追加されたデータフレーム
+    """
+    df_scores = df.copy()
+    # 合計得点を計算
+    df_scores[f"{scale_name}_total"] = df[scale_columns].sum(axis=1)
+    # 平均得点を計算
+    df_scores[f"{scale_name}_mean"] = df[scale_columns].mean(axis=1)
+    return df_scores

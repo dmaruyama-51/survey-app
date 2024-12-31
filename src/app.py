@@ -11,18 +11,12 @@ def main():
     home_page = st.Page(
         "contents/01_home.py", title="Home", icon=":material/home:", default=True
     )
-
-    # ページの定義
     cleaning_page = st.Page("contents/02_cleaning.py", title="Data Cleaning", icon="🧹")
-
     manipulation_page = st.Page(
         "contents/03_manipulation.py", title="Data Manipulation", icon="🔧"
     )
 
-    # ナビゲーションの設定と実行
     pg = st.navigation([home_page, cleaning_page, manipulation_page])
-
-    # 選択されたページを実行
     pg.run()
 
 

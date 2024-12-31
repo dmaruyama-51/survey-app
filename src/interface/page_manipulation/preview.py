@@ -1,53 +1,93 @@
 import streamlit as st
 import pandas as pd
 from typing import List
-from src.core.manipulation import reverse_score, prepare_download_data
 from src.utils.logger_config import logger
 
 
 def render_manipulation_preview_section(
-    df: pd.DataFrame, reverse_columns: List[str], scale_points: int
+    original_df: pd.DataFrame,
+    processed_df: pd.DataFrame,
+    reverse_columns: List[str],
+    scale_points: int,
 ) -> None:
     """データ操作のプレビューとダウンロードセクションを表示"""
     try:
-        # タブでオリジナルと変換後のデータを表示
-        tab1, tab2 = st.tabs(["Original Data", "Data with Reversed Scores"])
+        # 逆転項目の有無でタブ構成を変更
+        if reverse_columns:
+            tabs = st.tabs(["Original Data", "Reversed Scores", "Scale Scores"])
+        else:
+            tabs = st.tabs(["Original Data", "Scale Scores"])
 
-        with tab1:
+        with tabs[0]:
             st.write("Original values:")
-            st.dataframe(
-                df[reverse_columns],
-                use_container_width=True,
-            )
+            if reverse_columns:
+                st.dataframe(
+                    original_df[reverse_columns],
+                    use_container_width=True,
+                )
+            else:
+                st.dataframe(
+                    original_df,
+                    use_container_width=True,
+                )
 
-        with tab2:
-            reversed_df = reverse_score(df, reverse_columns, scale_points)
-            reversed_columns = [f"{col}_r" for col in reverse_columns]
-            st.write("Reversed values:")
-            st.dataframe(
-                reversed_df[reversed_columns],
-                use_container_width=True,
-            )
+        if reverse_columns:
+            with tabs[1]:
+                reversed_columns = [f"{col}_r" for col in reverse_columns]
+                st.write("Reversed values:")
+                st.dataframe(
+                    processed_df[reversed_columns],
+                    use_container_width=True,
+                )
+            scale_scores_tab = tabs[2]
+        else:
+            scale_scores_tab = tabs[1]
+
+        with scale_scores_tab:
+            score_columns = [
+                col for col in processed_df.columns if col.endswith(("_total", "_mean"))
+            ]
+            if score_columns:
+                st.write("Scale scores:")
+                st.dataframe(
+                    processed_df[score_columns],
+                    use_container_width=True,
+                )
+            else:
+                st.info("No scale scores calculated yet.")
 
         # ダウンロードオプション
         st.markdown("#### Download Options")
 
+        # 逆転項目の有無でダウンロードオプションを変更
+        if reverse_columns:
+            download_options = [
+                "Include all columns",
+                "Include only reversed and scale score columns",
+                "Include only scale score columns",
+            ]
+        else:
+            download_options = [
+                "Include all columns",
+                "Include only scale score columns",
+            ]
+
         download_option = st.radio(
             "Select columns to include in download:",
-            options=[
-                "Include both original and reversed columns",
-                "Include only reversed columns",
-            ],
-            help="Choose whether to keep or remove the original columns in the downloaded file",
+            options=download_options,
+            help="Choose which columns to include in the downloaded file",
         )
 
         # ダウンロード用のデータフレームを準備
-        include_original = (
-            download_option == "Include both original and reversed columns"
-        )
-        download_df = prepare_download_data(
-            df, reversed_df, reverse_columns, include_original
-        )
+        if download_option == "Include only scale score columns":
+            download_df = (
+                processed_df[score_columns].copy() if score_columns else processed_df
+            )
+        elif download_option == "Include only reversed and scale score columns":
+            reversed_columns = [f"{col}_r" for col in reverse_columns]
+            download_df = processed_df[reversed_columns + score_columns].copy()
+        else:
+            download_df = processed_df
 
         st.write("Preview of data to be downloaded:")
         st.dataframe(download_df.head(), use_container_width=True)
