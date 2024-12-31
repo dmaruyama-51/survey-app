@@ -18,13 +18,13 @@ def main():
     # ページの定義
     cleaning_page = st.Page(
         "contents/02_cleaning.py",
-        title="データクリーニング",
+        title="Data Cleaning",
         icon="🧹"
     )
 
     manipulation_page = st.Page(
         "contents/03_manipulation.py",
-        title="データ加工",
+        title="Data Manipulation",
         icon="🔧"
     )
 

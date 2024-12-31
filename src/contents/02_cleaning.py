@@ -7,8 +7,8 @@ from src.interface.state import check_step1_completion, check_step2_completion
 from src.utils.logger_config import logger
 
 try:
-    logger.info("Application started")
-    st.title("Survey Data Cleaning App")
+    logger.info("Data Cleaning Page loaded")
+    st.title("Data Cleaning")
     st.markdown("Clean and process your survey data with ease")
 
     st.markdown(
