@@ -12,11 +12,12 @@ This is a web application designed to clean social survey data collected using L
 3. **Out-of-Range Value Removal**: Filters out rows containing values outside the expected range (e.g., -1 or 100 in a 5-point scale).
 4. **Sequential Pattern Detection**: Removes rows with sequential patterns (e.g., 1, 2, 3, 4, 5...).
 
-### Technical Features
-- **CSV File Upload**: Users can upload their survey data as a CSV file for cleaning.
-- **Sample Data**: Sample datasets are available for testing the application.
-- **Likert Scale Support**: Supports a wide range of Likert scale points (3-9).
-- **Download Cleaned Data**: Enables users to download the cleaned data as a CSV file.
+### Data Manipulation Operations
+1. **Reverse Scoring**: Creates reverse-scored items with '_r' suffix while preserving original items.
+2. **Scale Score Calculation**: 
+   - Creates total scores and mean scores for multiple scales
+   - Supports up to 10 different scales
+   - Allows flexible item selection for each scale
 
 ## Technical Stack
 
