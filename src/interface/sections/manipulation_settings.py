@@ -3,6 +3,7 @@ import pandas as pd
 from typing import Tuple, List
 from src.utils.logger_config import logger
 
+
 def render_manipulation_settings_section(df: pd.DataFrame) -> Tuple[List[str], int]:
     """データ操作設定セクションを表示"""
     try:
@@ -15,8 +16,10 @@ def render_manipulation_settings_section(df: pd.DataFrame) -> Tuple[List[str], i
         )
 
         # 逆転させる列を選択
-        st.write("Choose the columns that need to be reverse-scored. The original columns will be preserved, and new reversed columns will be created with '_r' suffix.")
-        
+        st.write(
+            "Choose the columns that need to be reverse-scored. The original columns will be preserved, and new reversed columns will be created with '_r' suffix."
+        )
+
         reverse_columns = st.multiselect(
             "Select columns to reverse-score",
             options=df.columns,
@@ -28,4 +31,4 @@ def render_manipulation_settings_section(df: pd.DataFrame) -> Tuple[List[str], i
     except Exception as e:
         logger.error(f"Manipulation settings error: {str(e)}")
         st.error("An error occurred while configuring manipulation settings.")
-        raise 
+        raise

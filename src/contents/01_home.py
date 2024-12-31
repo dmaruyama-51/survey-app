@@ -37,20 +37,24 @@ st.markdown("Clean your raw survey data with our comprehensive cleaning tools:")
 
 # Data Cleaning Features Table
 cleaning_data = {
-    "Feature": ["Straight-Line Response Detection", "Missing Value Handling", 
-                "Out-of-Range Value Filtering", "Sequential Pattern Detection"],
+    "Feature": [
+        "Straight-Line Response Detection",
+        "Missing Value Handling",
+        "Out-of-Range Value Filtering",
+        "Sequential Pattern Detection",
+    ],
     "Description": [
         "Identifies and removes responses where participants selected the same value for all questions",
         "Removes rows containing missing values",
         "Removes responses outside the valid Likert scale range (e.g., -1 or 100 in a 5-point scale)",
-        "Identifies and removes responses with sequential patterns (e.g., 1,2,3,4,5...)"
+        "Identifies and removes responses with sequential patterns (e.g., 1,2,3,4,5...)",
     ],
     "Benefits": [
         "Helps eliminate potentially unreliable data",
         "Ensures data completeness for analysis",
         "Maintains data quality within scale bounds",
-        "Helps identify potentially non-genuine responses"
-    ]
+        "Helps identify potentially non-genuine responses",
+    ],
 }
 
 st.table(cleaning_data)
@@ -66,12 +70,12 @@ manipulation_data = {
     "Feature": ["Reverse Item Creation", "Scale Statistics"],
     "Description": [
         "Easily create reverse-scored items",
-        "Calculate scale totals and means"
+        "Calculate scale totals and means",
     ],
     "Benefits": [
         "Maintain consistency in your scale directions",
-        "Streamline your data aggregation process"
-    ]
+        "Streamline your data aggregation process",
+    ],
 }
 
 st.table(manipulation_data)
@@ -84,13 +88,21 @@ st.markdown(
 col1, col2 = st.columns(2)
 
 with col1:
-    st.info("Ready to clean your data? Go to the **Data Cleaning** page from the sidebar.", icon="🧹")
+    st.info(
+        "Ready to clean your data? Go to the **Data Cleaning** page from the sidebar.",
+        icon="🧹",
+    )
 
 with col2:
-    st.info("Need to manipulate your data? Select **Data Manipulation** from the sidebar.", icon="🔧")
+    st.info(
+        "Need to manipulate your data? Select **Data Manipulation** from the sidebar.",
+        icon="🔧",
+    )
 
 st.markdown(
     "<div class='tight-header'><h2>🔗 Source Code</h2></div><hr/>",
     unsafe_allow_html=True,
 )
-st.markdown("Interested in the implementation? Check out our [GitHub repository](https://github.com/dmaruyama-51/survey-app/tree/main)")
+st.markdown(
+    "Interested in the implementation? Check out our [GitHub repository](https://github.com/dmaruyama-51/survey-app/tree/main)"
+)

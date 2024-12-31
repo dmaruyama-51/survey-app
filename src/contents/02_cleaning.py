@@ -5,7 +5,7 @@ from src.interface.sections.data_cleaning import process_data_cleaning_and_expor
 from src.interface.components.data_summary import display_data_summary
 from src.interface.state import (
     check_file_upload_completion,
-    check_data_settings_completion
+    check_data_settings_completion,
 )
 from src.utils.logger_config import logger
 
@@ -48,7 +48,7 @@ try:
             display_data_summary(df)
         else:
             logger.warning("No data loaded")
-            
+
     except Exception as e:
         logger.error(f"Data loading error: {str(e)}")
         st.error("Failed to load data. Please check your file.")
@@ -90,7 +90,7 @@ try:
                 except Exception as e:
                     logger.error(f"Data cleaning error: {str(e)}")
                     st.error("An error occurred during data cleaning.")
-                    
+
         except Exception as e:
             logger.error(f"Step 2 configuration error: {str(e)}")
             st.error("An error occurred in Step 2 configuration.")

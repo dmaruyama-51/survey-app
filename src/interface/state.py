@@ -19,7 +19,9 @@ def initialize_cleaning_state(
     st.session_state.removed_df = all_df.loc[remove_rows]
 
 
-def check_data_settings_completion(remove_cols: list[str], likert_scale: int | None) -> bool:
+def check_data_settings_completion(
+    remove_cols: list[str], likert_scale: int | None
+) -> bool:
     """
     Step2の要件が満たされているかチェックする
     Args:

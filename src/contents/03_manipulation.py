@@ -1,7 +1,11 @@
 import streamlit as st
 from src.interface.sections.file_upload import render_file_upload_section
-from src.interface.sections.manipulation_settings import render_manipulation_settings_section
-from src.interface.sections.manipulation_preview import render_manipulation_preview_section
+from src.interface.sections.manipulation_settings import (
+    render_manipulation_settings_section,
+)
+from src.interface.sections.manipulation_preview import (
+    render_manipulation_preview_section,
+)
 from src.interface.components.data_summary import display_data_summary
 from src.interface.state import check_file_upload_completion
 from src.utils.logger_config import logger
@@ -71,7 +75,9 @@ try:
                     unsafe_allow_html=True,
                 )
                 try:
-                    render_manipulation_preview_section(df, reverse_columns, scale_points)
+                    render_manipulation_preview_section(
+                        df, reverse_columns, scale_points
+                    )
                 except Exception as e:
                     logger.error(f"Data processing error: {str(e)}")
                     st.error("An error occurred while processing the data.")
