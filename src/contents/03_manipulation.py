@@ -1,6 +1,8 @@
 import streamlit as st
 from src.interface.page_common.file_upload import render_file_upload_section
-from src.interface.page_manipulation.settings import render_manipulation_settings_section
+from src.interface.page_manipulation.settings import (
+    render_manipulation_settings_section,
+)
 from src.interface.page_manipulation.preview import render_manipulation_preview_section
 from src.interface.components.data_summary import display_data_summary
 from src.interface.state import (
@@ -11,11 +13,14 @@ from src.interface.state import (
 from src.utils.logger_config import logger
 from src.interface.page_manipulation.scale_scores import render_scale_score_section
 from src.core.manipulation import reverse_score
+from typing import List
 
 try:
     logger.info("Data Manipulation Page loaded")
     st.title("Data Manipulation")
-    st.markdown("Create reverse-scored items and calculate scale scores for your survey data.")
+    st.markdown(
+        "Create reverse-scored items and calculate scale scores for your survey data."
+    )
 
     st.markdown(
         """
@@ -71,16 +76,18 @@ try:
                 help="Check this if you need to reverse-score any items",
             )
 
-            reverse_columns = []
-            scale_points = 7  # デフォルト値
-            reversed_df = df.copy()
+            reverse_columns: List[str] = []
+            scale_points = 7
+            reversed_df = df.copy() if df is not None else None
 
-            if has_reverse_items:
+            if has_reverse_items and df is not None:
                 reverse_columns, scale_points = render_manipulation_settings_section(df)
                 if reverse_columns:
                     reversed_df = reverse_score(df, reverse_columns, scale_points)
 
-            if check_manipulation_settings_completion(has_reverse_items, reverse_columns):
+            if check_manipulation_settings_completion(
+                has_reverse_items, reverse_columns
+            ):
                 # -----------------------------------
                 # Step3. Calculate Scale Scores
                 # -----------------------------------
@@ -90,7 +97,7 @@ try:
                 )
                 try:
                     df_with_scores = render_scale_score_section(reversed_df)
-                    
+
                     if check_scale_scores_completion(df_with_scores):
                         # -----------------------------------
                         # Step4. Preview and Download Results

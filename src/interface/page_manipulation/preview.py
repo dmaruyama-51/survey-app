@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from typing import List
-from src.core.manipulation import reverse_score, prepare_download_data
 from src.utils.logger_config import logger
 
 
@@ -9,7 +8,7 @@ def render_manipulation_preview_section(
     original_df: pd.DataFrame,
     processed_df: pd.DataFrame,
     reverse_columns: List[str],
-    scale_points: int
+    scale_points: int,
 ) -> None:
     """データ操作のプレビューとダウンロードセクションを表示"""
     try:
@@ -46,8 +45,7 @@ def render_manipulation_preview_section(
 
         with scale_scores_tab:
             score_columns = [
-                col for col in processed_df.columns
-                if col.endswith(("_total", "_mean"))
+                col for col in processed_df.columns if col.endswith(("_total", "_mean"))
             ]
             if score_columns:
                 st.write("Scale scores:")
@@ -82,7 +80,9 @@ def render_manipulation_preview_section(
 
         # ダウンロード用のデータフレームを準備
         if download_option == "Include only scale score columns":
-            download_df = processed_df[score_columns].copy() if score_columns else processed_df
+            download_df = (
+                processed_df[score_columns].copy() if score_columns else processed_df
+            )
         elif download_option == "Include only reversed and scale score columns":
             reversed_columns = [f"{col}_r" for col in reverse_columns]
             download_df = processed_df[reversed_columns + score_columns].copy()

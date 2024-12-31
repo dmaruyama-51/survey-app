@@ -3,6 +3,7 @@ import pandas as pd
 from typing import List, Dict
 from src.core.manipulation import calculate_scale_scores
 
+
 def render_scale_score_section(df: pd.DataFrame) -> pd.DataFrame:
     """因子得点計算のUIセクションを表示"""
     st.markdown("#### Scale Score Calculation")
@@ -26,7 +27,7 @@ def render_scale_score_section(df: pd.DataFrame) -> pd.DataFrame:
     # 各因子の設定
     for i in range(num_scales):
         st.markdown(f"##### Scale {i + 1}")
-        
+
         # 因子名の入力
         scale_name = st.text_input(
             f"Scale {i + 1} name",
@@ -36,7 +37,7 @@ def render_scale_score_section(df: pd.DataFrame) -> pd.DataFrame:
         )
 
         # 項目の選択（すでに逆転済みの項目も含める）
-        scale_items = st.multiselect(
+        scale_items: List[str] = st.multiselect(
             f"Select items for {scale_name}",
             options=df.columns,
             key=f"scale_items_{i}",
@@ -52,13 +53,13 @@ def render_scale_score_section(df: pd.DataFrame) -> pd.DataFrame:
 
             # プレビューを表示
             with st.expander(f"Preview {scale_name} scores"):
-                preview_cols = (
-                    scale_items
-                    + [f"{scale_name}_total", f"{scale_name}_mean"]
-                )
+                preview_cols = scale_items + [
+                    f"{scale_name}_total",
+                    f"{scale_name}_mean",
+                ]
                 st.dataframe(
                     df_with_scores[preview_cols].head(),
                     use_container_width=True,
                 )
 
-    return df_with_scores 
+    return df_with_scores

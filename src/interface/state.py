@@ -109,7 +109,7 @@ def check_scale_scores_completion(df: pd.DataFrame | None) -> bool:
             icon="ℹ️",
         )
         return False
-    
+
     # 因子得点が計算されているかチェック
     score_columns = [col for col in df.columns if col.endswith(("_total", "_mean"))]
     if not score_columns:

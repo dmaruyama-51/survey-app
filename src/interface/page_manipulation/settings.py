@@ -11,7 +11,7 @@ def render_manipulation_settings_section(df: pd.DataFrame) -> Tuple[List[str], i
         scale_points = st.select_slider(
             "Select the number of Likert scale points",
             options=[3, 4, 5, 6, 7, 8, 9],
-            value=5,
+            value=7,
             help="Choose the number of points in your Likert scale (e.g., 5 for a 5-point scale)",
         )
 

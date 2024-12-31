@@ -15,9 +15,9 @@ def test_check_file_upload_completion():
     """Step1の完了チェック機能のテスト"""
     # データフレームがNoneの場合
     assert not check_file_upload_completion(None)
-    
+
     # 有効なデータフレームの場合
-    df = pd.DataFrame({'test': [1, 2, 3]})
+    df = pd.DataFrame({"test": [1, 2, 3]})
     assert check_file_upload_completion(df)
 
 
@@ -40,17 +40,15 @@ def test_check_manipulation_settings_completion():
     """逆転項目設定の完了チェック機能のテスト"""
     # 逆転項目なしの場合
     assert check_manipulation_settings_completion(has_reverse_items=False)
-    
+
     # 逆転項目ありだが、選択なしの場合
     assert not check_manipulation_settings_completion(
-        has_reverse_items=True,
-        reverse_columns=[]
+        has_reverse_items=True, reverse_columns=[]
     )
-    
+
     # 逆転項目あり、選択ありの場合
     assert check_manipulation_settings_completion(
-        has_reverse_items=True,
-        reverse_columns=["Q1", "Q2"]
+        has_reverse_items=True, reverse_columns=["Q1", "Q2"]
     )
 
 
@@ -58,21 +56,20 @@ def test_check_scale_scores_completion():
     """因子得点計算の完了チェック機能のテスト"""
     # データフレームがNoneの場合
     assert not check_scale_scores_completion(None)
-    
+
     # 因子得点が計算されていない場合
-    df_no_scores = pd.DataFrame({
-        'Q1': [1, 2, 3],
-        'Q2': [2, 3, 4]
-    })
+    df_no_scores = pd.DataFrame({"Q1": [1, 2, 3], "Q2": [2, 3, 4]})
     assert not check_scale_scores_completion(df_no_scores)
-    
+
     # 因子得点が計算されている場合
-    df_with_scores = pd.DataFrame({
-        'Q1': [1, 2, 3],
-        'Q2': [2, 3, 4],
-        'factor1_total': [3, 5, 7],
-        'factor1_mean': [1.5, 2.5, 3.5]
-    })
+    df_with_scores = pd.DataFrame(
+        {
+            "Q1": [1, 2, 3],
+            "Q2": [2, 3, 4],
+            "factor1_total": [3, 5, 7],
+            "factor1_mean": [1.5, 2.5, 3.5],
+        }
+    )
     assert check_scale_scores_completion(df_with_scores)
 
 
@@ -102,10 +99,10 @@ def test_initialize_cleaning_state():
 def test_reset_cleaning_state():
     """クリーニング状態のリセットテスト"""
     # テスト用のセッション状態を設定
-    st.session_state.cleaned_df = pd.DataFrame({'test': [1, 2, 3]})
-    st.session_state.removed_df = pd.DataFrame({'test': [4, 5]})
+    st.session_state.cleaned_df = pd.DataFrame({"test": [1, 2, 3]})
+    st.session_state.removed_df = pd.DataFrame({"test": [4, 5]})
     st.session_state.cleaning_executed = True
-    st.session_state.removed_df_with_checkbox = pd.DataFrame({'test': [4, 5]})
+    st.session_state.removed_df_with_checkbox = pd.DataFrame({"test": [4, 5]})
     st.session_state.editor_key = 0
 
     # リセット実行
@@ -117,7 +114,7 @@ def test_reset_cleaning_state():
         "removed_df",
         "cleaning_executed",
         "removed_df_with_checkbox",
-        "editor_key"
+        "editor_key",
     ]
     for key in keys_to_check:
         assert key not in st.session_state

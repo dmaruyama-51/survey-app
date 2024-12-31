@@ -39,7 +39,7 @@ def calculate_scale_scores(
 ) -> pd.DataFrame:
     """
     指定された列の合計得点と平均得点を計算する
-    
+
     Args:
         df (pd.DataFrame): 入力データフレーム
         scale_columns (List[str]): 因子を構成する項目のリスト
