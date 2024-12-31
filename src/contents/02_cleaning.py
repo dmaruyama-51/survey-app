@@ -1,9 +1,12 @@
 import streamlit as st
-from src.interface.sections.step1 import render_file_upload_section
-from src.interface.sections.step2 import render_data_settings_section
-from src.interface.sections.step3 import process_data_cleaning_and_export
+from src.interface.sections.file_upload import render_file_upload_section
+from src.interface.sections.data_settings import render_data_settings_section
+from src.interface.sections.data_cleaning import process_data_cleaning_and_export
 from src.interface.components.data_summary import display_data_summary
-from src.interface.state import check_step1_completion, check_step2_completion
+from src.interface.state import (
+    check_file_upload_completion,
+    check_data_settings_completion
+)
 from src.utils.logger_config import logger
 
 try:
@@ -51,7 +54,7 @@ try:
         st.error("Failed to load data. Please check your file.")
 
     # Step1の完了チェック
-    if check_step1_completion(df):
+    if check_file_upload_completion(df):
         # -----------------------------------
         # Step2. Configure Data Settings
         # -----------------------------------
@@ -65,7 +68,7 @@ try:
             )
 
             # step2の要件が満たされているかチェック
-            step2_completed = check_step2_completion(
+            step2_completed = check_data_settings_completion(
                 remove_cols=df_not_to_process.columns.tolist(),
                 likert_scale=likert_scale,
             )
