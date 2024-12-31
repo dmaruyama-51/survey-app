@@ -1,7 +1,7 @@
 import streamlit as st
 from typing import Tuple
 import pandas as pd
-from src.core.data_processing import split_dataframe
+from src.core.dataframe_operation import split_dataframe
 from src.utils.logger_config import logger
 
 

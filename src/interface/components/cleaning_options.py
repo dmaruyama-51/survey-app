@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from typing import Tuple, List
-from src.core.data_processing import create_final_dataset
+from src.core.dataframe_operation import create_final_dataset
 
 
 def render_cleaning_options() -> Tuple[bool, bool, bool, bool]:

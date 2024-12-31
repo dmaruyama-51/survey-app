@@ -20,7 +20,7 @@ def render_manipulation_settings_section(df: pd.DataFrame) -> Tuple[List[str], i
             "Choose the columns that need to be reverse-scored. The original columns will be preserved, and new reversed columns will be created with '_r' suffix."
         )
 
-        reverse_columns = st.multiselect(
+        reverse_columns: List[str] = st.multiselect(
             "Select columns to reverse-score",
             options=df.columns,
             help="Select one or more columns to reverse-score",
@@ -29,6 +29,5 @@ def render_manipulation_settings_section(df: pd.DataFrame) -> Tuple[List[str], i
         return reverse_columns, scale_points
 
     except Exception as e:
-        logger.error(f"Manipulation settings error: {str(e)}")
-        st.error("An error occurred while configuring manipulation settings.")
+        logger.error(f"Error in manipulation settings: {str(e)}")
         raise
