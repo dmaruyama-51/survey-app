@@ -2,7 +2,8 @@
 
 ## Description
 
-This is a web application designed to clean social survey data collected using Likert scales. Built with Streamlit and Python, the application offers intuitive, user-friendly tools for handling common data issues in survey research. The application is deployed on Google Cloud Run, ensuring scalability and ease of access for users.
+This is a web application for efficiently preprocessing social survey data collected using Likert scales before subjecting them to statistical analysis. Specifically, it can perform everything from cleaning inappropriate responses to creating reversal items and calculating factor scores.  
+Built with Streamlit and Python, the application offers intuitive, user-friendly tools for handling common data issues in survey research. The application is deployed on Google Cloud Run, ensuring scalability and ease of access for users.
 
 ## Features
 
@@ -13,8 +14,8 @@ This is a web application designed to clean social survey data collected using L
 4. **Sequential Pattern Detection**: Removes rows with sequential patterns (e.g., 1, 2, 3, 4, 5...).
 
 ### Data Manipulation Operations
-1. **Reverse Scoring**: Creates reverse-scored items with '_r' suffix while preserving original items.
-2. **Scale Score Calculation**: 
+1. **Reversal Items Creation**: Creates reverse-scored items with '_r' suffix while preserving original items.
+2. **Factor Score Calculation**: 
    - Creates total scores and mean scores for multiple scales
    - Supports up to 10 different scales
    - Allows flexible item selection for each scale
