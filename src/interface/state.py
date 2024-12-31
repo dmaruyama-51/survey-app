@@ -19,7 +19,9 @@ def initialize_cleaning_state(
     st.session_state.removed_df = all_df.loc[remove_rows]
 
 
-def check_step2_completion(remove_cols: list[str], likert_scale: int | None) -> bool:
+def check_data_settings_completion(
+    remove_cols: list[str], likert_scale: int | None
+) -> bool:
     """
     Step2の要件が満たされているかチェックする
     Args:
@@ -39,6 +41,20 @@ def check_step2_completion(remove_cols: list[str], likert_scale: int | None) -> 
         return False
     elif likert_scale is None:
         st.info("Please select the number of Likert scale points.", icon="ℹ️")
+        return False
+    return True
+
+
+def check_file_upload_completion(df: pd.DataFrame | None) -> bool:
+    """
+    Step1の要件が満たされているかチェックする
+    Args:
+        df (pd.DataFrame | None): アップロードされたデータフレーム
+    Returns:
+        bool: 要件を満たしているかどうか
+    """
+    if df is None:
+        st.info("Please upload a CSV file or use sample data to proceed.", icon="ℹ️")
         return False
     return True
 

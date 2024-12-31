@@ -1,5 +1,5 @@
 import pandas as pd
-from src.core.data_processing import split_dataframe, create_final_dataset
+from src.core.dataframe_operation import split_dataframe, create_final_dataset
 
 
 def test_split_dataframe_basic():

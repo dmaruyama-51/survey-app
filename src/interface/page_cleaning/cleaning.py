@@ -6,7 +6,7 @@ from src.interface.components.cleaning_options import (
     render_cleaning_options,
     render_removed_records_editor,
 )
-from src.core.data_processing import create_final_dataset
+from src.core.dataframe_operation import create_final_dataset
 
 
 def process_data_cleaning_and_export(
