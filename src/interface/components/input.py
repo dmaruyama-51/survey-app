@@ -6,6 +6,7 @@ import streamlit as st
 from src.core.data_loading import load_and_validate_csv, load_sample_data
 from src.core.dataframe_operation import split_dataframe
 from src.utils.logger_config import logger
+from src.interface.state import save_uploaded_data
 
 # ==============================
 # for Common
@@ -13,15 +14,22 @@ from src.utils.logger_config import logger
 
 
 def input_file_upload() -> pd.DataFrame | None:
-    """
-    CSVファイルのアップロードを受け付けるUIを表示
-    Returns:
-        pd.DataFrame | None: アップロードされたCSVデータ、またはNone
-    """
+    """ファイルアップロードUIを表示"""
     try:
         st.markdown("#### Upload CSV File")
+        
+        # 既存のデータがある場合、クリアオプションを表示
+        if st.session_state.uploaded_df is not None:
+            if st.button("Clear uploaded data"):
+                st.session_state.uploaded_df = None
+                st.session_state.use_sample = False
+                st.rerun()
+            return st.session_state.uploaded_df
+
+        # サンプルデータの使用オプション
         use_sample = st.checkbox(
             "Use sample data",
+            value=st.session_state.use_sample,
             help="Check this box to use sample data instead of uploading a file",
         )
 
@@ -29,9 +37,11 @@ def input_file_upload() -> pd.DataFrame | None:
             df = load_sample_data()
             if df is not None:
                 st.success("Sample data loaded successfully!")
+                save_uploaded_data(df, is_sample=True)
                 return df
             return None
 
+        # ファイルアップロードオプション
         uploaded_file = st.file_uploader(
             "Choose a CSV file", type="csv", key="file_uploader"
         )
@@ -40,6 +50,7 @@ def input_file_upload() -> pd.DataFrame | None:
             df = load_and_validate_csv(uploaded_file)
             if df is not None:
                 st.success("File successfully uploaded and validated!")
+                save_uploaded_data(df, is_sample=False)
                 return df
 
         return None

@@ -1,4 +1,5 @@
 import streamlit as st
+from src.interface.state import initialize_app_state
 
 
 def main():
@@ -7,6 +8,9 @@ def main():
         page_title="Survey Data Cleaning App",
         page_icon="📊",
     )
+    
+    # アプリケーションの状態を初期化
+    initialize_app_state()
 
     home_page = st.Page(
         "contents/01_home.py", title="Home", icon=":material/home:", default=True
@@ -17,6 +21,7 @@ def main():
     )
 
     pg = st.navigation([home_page, cleaning_page, manipulation_page])
+    st.session_state.current_page = pg.title
     pg.run()
 
 
