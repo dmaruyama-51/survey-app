@@ -1,8 +1,6 @@
 import streamlit as st
-from src.interface.page_common.file_upload import render_file_upload_section
-from src.interface.page_cleaning.settings import render_data_settings_section
-from src.interface.page_cleaning.cleaning import process_data_cleaning_and_export
-from src.interface.components.data_summary import display_data_summary
+from src.interface.pages.common import render_file_upload_section
+from src.interface.pages.cleaning import render_data_settings_section, render_process_data_cleaning_and_export_section
 from src.interface.state import (
     check_file_upload_completion,
     check_data_settings_completion,
@@ -41,17 +39,7 @@ try:
         "<div class='tight-header step1-header'><h3>📌 Step 1: Upload Survey Data</h3></div><hr/>",
         unsafe_allow_html=True,
     )
-    try:
-        df = render_file_upload_section()
-        if df is not None:
-            logger.info(f"Data loaded successfully. Shape: {df.shape}")
-            display_data_summary(df)
-        else:
-            logger.warning("No data loaded")
-
-    except Exception as e:
-        logger.error(f"Data loading error: {str(e)}")
-        st.error("Failed to load data. Please check your file.")
+    df = render_file_upload_section()
 
     # Step1の完了チェック
     if check_file_upload_completion(df):
@@ -83,7 +71,7 @@ try:
                 )
                 try:
                     logger.info("Starting data cleaning process")
-                    process_data_cleaning_and_export(
+                    render_process_data_cleaning_and_export_section(
                         df_to_process, df_not_to_process, likert_scale
                     )
                     logger.info("Data cleaning completed")

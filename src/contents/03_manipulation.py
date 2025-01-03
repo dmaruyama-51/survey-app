@@ -1,18 +1,17 @@
 import streamlit as st
-from src.interface.page_common.file_upload import render_file_upload_section
-from src.interface.page_manipulation.settings import (
+from src.interface.pages.common import render_file_upload_section
+from src.interface.pages.manipulation import (
     render_manipulation_settings_section,
+    render_manipulation_preview_section,
+    render_scale_score_section,
+    render_has_reverse_items_option_section,
 )
-from src.interface.page_manipulation.preview import render_manipulation_preview_section
-from src.interface.components.data_summary import display_data_summary
 from src.interface.state import (
     check_file_upload_completion,
     check_manipulation_settings_completion,
     check_scale_scores_completion,
 )
 from src.utils.logger_config import logger
-from src.interface.page_manipulation.scale_scores import render_scale_score_section
-from src.core.manipulation import reverse_score
 from typing import List
 
 try:
@@ -49,16 +48,7 @@ try:
         "<div class='tight-header step1-header'><h3>📌 Step 1: Upload Survey Data</h3></div><hr/>",
         unsafe_allow_html=True,
     )
-    try:
-        df = render_file_upload_section()
-        if df is not None:
-            logger.info(f"Data loaded successfully. Shape: {df.shape}")
-            display_data_summary(df)
-        else:
-            logger.warning("No data loaded")
-    except Exception as e:
-        logger.error(f"Data loading error: {str(e)}")
-        st.error("Failed to load data. Please check your file.")
+    df = render_file_upload_section()
 
     if check_file_upload_completion(df):
         # -----------------------------------
@@ -70,20 +60,14 @@ try:
         )
         try:
             # 逆転項目の有無を確認
-            has_reverse_items = st.checkbox(
-                "I have items that need to be reverse-scored",
-                value=False,
-                help="Check this if you need to reverse-score any items",
-            )
+            has_reverse_items = render_has_reverse_items_option_section()
 
-            reverse_columns: List[str] = []
-            scale_points = 7
-            reversed_df = df.copy() if df is not None else None
-
-            if has_reverse_items and df is not None:
-                reverse_columns, scale_points = render_manipulation_settings_section(df)
-                if reverse_columns:
-                    reversed_df = reverse_score(df, reverse_columns, scale_points)
+            if has_reverse_items:
+                reverse_columns, scale_points, reversed_df = render_manipulation_settings_section(df)
+            else:
+                reverse_columns: List[str] = []
+                scale_points = 7
+                reversed_df = df.copy() if df is not None else None
 
             if check_manipulation_settings_completion(
                 has_reverse_items, reverse_columns
