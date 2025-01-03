@@ -1,10 +1,11 @@
 import streamlit as st
+
 from src.interface.pages.common import render_file_upload_section
 from src.interface.pages.manipulation import (
-    render_manipulation_settings_section,
-    render_manipulation_preview_section,
-    render_scale_score_section,
     render_has_reverse_items_option_section,
+    render_manipulation_preview_section,
+    render_manipulation_settings_section,
+    render_scale_score_section,
 )
 from src.interface.state import (
     check_file_upload_completion,

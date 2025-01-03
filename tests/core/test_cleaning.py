@@ -1,9 +1,10 @@
 import pandas as pd
+
 from src.core.cleaning import (
-    remove_straight_line_responses,
+    remove_invalid_responses,
     remove_missing_values,
     remove_out_of_range_values,
-    remove_invalid_responses,
+    remove_straight_line_responses,
 )
 
 

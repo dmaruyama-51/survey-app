@@ -1,8 +1,10 @@
-import streamlit as st
+from typing import Dict, List, Tuple
+
 import pandas as pd
-from typing import Tuple, List, Dict
-from src.interface.components.input import input_manipulation_settings
+import streamlit as st
+
 from src.core.manipulation import calculate_scale_scores, reverse_score
+from src.interface.components.input import input_manipulation_settings
 from src.utils.logger_config import logger
 
 

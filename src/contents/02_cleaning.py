@@ -1,12 +1,13 @@
 import streamlit as st
-from src.interface.pages.common import render_file_upload_section
+
 from src.interface.pages.cleaning import (
     render_data_settings_section,
     render_process_data_cleaning_and_export_section,
 )
+from src.interface.pages.common import render_file_upload_section
 from src.interface.state import (
-    check_file_upload_completion,
     check_data_settings_completion,
+    check_file_upload_completion,
 )
 from src.utils.logger_config import logger
 

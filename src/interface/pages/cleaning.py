@@ -1,15 +1,17 @@
-import streamlit as st
-import pandas as pd
-from src.utils.logger_config import logger
-from src.interface.state import initialize_cleaning_state, reset_cleaning_state
-from src.interface.components.input import (
-    input_column_selection,
-    input_likert_scale_selection,
-    input_cleaning_options,
-    input_keep_records,
-)
-from src.interface.components.display import disaply_final_dataset
 from typing import Tuple
+
+import pandas as pd
+import streamlit as st
+
+from src.interface.components.display import disaply_final_dataset
+from src.interface.components.input import (
+    input_cleaning_options,
+    input_column_selection,
+    input_keep_records,
+    input_likert_scale_selection,
+)
+from src.interface.state import initialize_cleaning_state, reset_cleaning_state
+from src.utils.logger_config import logger
 
 
 def render_data_settings_section(

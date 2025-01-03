@@ -1,7 +1,8 @@
+import streamlit as st
+
 from src.interface.components.display import display_data_summary
 from src.interface.components.input import input_file_upload
 from src.utils.logger_config import logger
-import streamlit as st
 
 
 def render_file_upload_section():

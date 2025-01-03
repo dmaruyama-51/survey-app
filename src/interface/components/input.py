@@ -1,8 +1,10 @@
-import streamlit as st
+from typing import List, Tuple
+
 import pandas as pd
-from typing import Tuple, List
-from src.core.dataframe_operation import split_dataframe
+import streamlit as st
+
 from src.core.data_loading import load_and_validate_csv, load_sample_data
+from src.core.dataframe_operation import split_dataframe
 from src.utils.logger_config import logger
 
 # ==============================
