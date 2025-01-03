@@ -12,7 +12,6 @@ from src.interface.state import (
     check_scale_scores_completion,
 )
 from src.utils.logger_config import logger
-from typing import List
 
 try:
     logger.info("Data Manipulation Page loaded")
@@ -63,11 +62,13 @@ try:
             has_reverse_items = render_has_reverse_items_option_section()
 
             if has_reverse_items:
-                reverse_columns, scale_points, reversed_df = render_manipulation_settings_section(df)
+                reverse_columns, scale_points, reversed_df = (
+                    render_manipulation_settings_section(df)
+                )
             else:
-                reverse_columns: List[str] = []
                 scale_points = 7
                 reversed_df = df.copy() if df is not None else None
+                reverse_columns = []
 
             if check_manipulation_settings_completion(
                 has_reverse_items, reverse_columns

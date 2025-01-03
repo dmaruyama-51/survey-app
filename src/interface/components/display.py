@@ -25,6 +25,7 @@ def display_data_summary(df: pd.DataFrame) -> None:
         logger.error(f"Error displaying data summary: {str(e)}")
         st.error("An error occurred while displaying the data.")
 
+
 def disaply_final_dataset(rows_to_keep: list) -> pd.DataFrame:
     """最終的にダウンロードされるデータセットを作成してUIに表示"""
     final_cleaned_df = create_final_dataset(

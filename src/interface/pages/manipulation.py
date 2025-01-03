@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from typing import Tuple, List, Dict
+from src.interface.components.input import input_manipulation_settings
 from src.core.manipulation import calculate_scale_scores, reverse_score
 from src.utils.logger_config import logger
 
@@ -14,27 +15,13 @@ def render_has_reverse_items_option_section() -> bool:
     )
     return has_reverse_items
 
-def render_manipulation_settings_section(df: pd.DataFrame) -> Tuple[List[str], int]:
+
+def render_manipulation_settings_section(
+    df: pd.DataFrame,
+) -> Tuple[List[str], int, pd.DataFrame]:
     """データ操作設定セクションを表示"""
     try:
-        # リッカート尺度のポイント数を選択
-        scale_points = st.select_slider(
-            "Select the number of Likert scale points",
-            options=[3, 4, 5, 6, 7, 8, 9],
-            value=7,
-            help="Choose the number of points in your Likert scale (e.g., 5 for a 5-point scale)",
-        )
-
-        # 逆転させる列を選択
-        st.write(
-            "Choose the columns that need to be reverse-scored. The original columns will be preserved, and new reversed columns will be created with '_r' suffix."
-        )
-
-        reverse_columns: List[str] = st.multiselect(
-            "Select columns to reverse-score",
-            options=df.columns,
-            help="Select one or more columns to reverse-score",
-        )
+        scale_points, reverse_columns = input_manipulation_settings(df)
 
         if reverse_columns:
             reversed_df = reverse_score(df, reverse_columns, scale_points)
@@ -45,6 +32,7 @@ def render_manipulation_settings_section(df: pd.DataFrame) -> Tuple[List[str], i
     except Exception as e:
         logger.error(f"Error in manipulation settings: {str(e)}")
         raise
+
 
 def render_manipulation_preview_section(
     original_df: pd.DataFrame,
@@ -147,6 +135,7 @@ def render_manipulation_preview_section(
         logger.error(f"Manipulation preview error: {str(e)}")
         st.error("An error occurred while displaying the preview.")
         raise
+
 
 def render_scale_score_section(df: pd.DataFrame) -> pd.DataFrame:
     """因子得点計算のUIセクションを表示"""

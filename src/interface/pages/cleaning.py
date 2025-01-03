@@ -2,9 +2,15 @@ import streamlit as st
 import pandas as pd
 from src.utils.logger_config import logger
 from src.interface.state import initialize_cleaning_state, reset_cleaning_state
-from src.interface.components.input import input_column_selection, input_likert_scale_selection, input_cleaning_options, input_keep_records
+from src.interface.components.input import (
+    input_column_selection,
+    input_likert_scale_selection,
+    input_cleaning_options,
+    input_keep_records,
+)
 from src.interface.components.display import disaply_final_dataset
 from typing import Tuple
+
 
 def render_data_settings_section(
     df: pd.DataFrame,
@@ -20,6 +26,7 @@ def render_data_settings_section(
         logger.error(f"Data settings error: {str(e)}")
         st.error("An error occurred while configuring data settings.")
         raise
+
 
 def render_process_data_cleaning_and_export_section(
     df_to_process: pd.DataFrame, df_not_to_process: pd.DataFrame, likert_scale_case: int

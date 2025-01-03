@@ -5,6 +5,11 @@ from src.core.dataframe_operation import split_dataframe
 from src.core.data_loading import load_and_validate_csv, load_sample_data
 from src.utils.logger_config import logger
 
+# ==============================
+# for Common
+# ==============================
+
+
 def input_file_upload() -> pd.DataFrame | None:
     """
     CSVファイルのアップロードを受け付けるUIを表示
@@ -43,6 +48,11 @@ def input_file_upload() -> pd.DataFrame | None:
         return None
 
 
+# ==============================
+# for Cleaning
+# ==============================
+
+
 def input_column_selection(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """カラム選択UIを表示"""
     try:
@@ -65,6 +75,7 @@ def input_column_selection(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame
     except Exception as e:
         logger.error(f"Column selection error: {str(e)}")
         raise
+
 
 def input_likert_scale_selection() -> int:
     """リッカート尺度選択UIを表示"""
@@ -127,3 +138,32 @@ def input_keep_records() -> List[int]:
     return st.session_state.removed_df_with_checkbox[
         st.session_state.removed_df_with_checkbox["Keep This Row"]
     ].index.tolist()
+
+
+# ==============================
+# for Manipulation
+# ==============================
+
+
+def input_manipulation_settings(df: pd.DataFrame) -> Tuple[int, List[str]]:
+    """データ操作設定セクションを表示"""
+    # リッカート尺度のポイント数を選択
+    scale_points = st.select_slider(
+        "Select the number of Likert scale points",
+        options=[3, 4, 5, 6, 7, 8, 9],
+        value=7,
+        help="Choose the number of points in your Likert scale (e.g., 5 for a 5-point scale)",
+    )
+
+    # 逆転させる列を選択
+    st.write(
+        "Choose the columns that need to be reverse-scored. The original columns will be preserved, and new reversed columns will be created with '_r' suffix."
+    )
+
+    reverse_columns: List[str] = st.multiselect(
+        "Select columns to reverse-score",
+        options=df.columns,
+        help="Select one or more columns to reverse-score",
+    )
+
+    return scale_points, reverse_columns
