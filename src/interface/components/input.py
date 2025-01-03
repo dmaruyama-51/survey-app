@@ -5,8 +5,8 @@ import streamlit as st
 
 from src.core.data_loading import load_and_validate_csv, load_sample_data
 from src.core.dataframe_operation import split_dataframe
-from src.utils.logger_config import logger
 from src.interface.state import save_uploaded_data
+from src.utils.logger_config import logger
 
 # ==============================
 # for Common
@@ -17,7 +17,7 @@ def input_file_upload() -> pd.DataFrame | None:
     """ファイルアップロードUIを表示"""
     try:
         st.markdown("#### Upload CSV File")
-        
+
         # 既存のデータがある場合、クリアオプションを表示
         if st.session_state.uploaded_df is not None:
             if st.button("Clear uploaded data"):

@@ -1,4 +1,5 @@
 import streamlit as st
+
 from src.interface.state import initialize_app_state
 
 
@@ -8,7 +9,7 @@ def main():
         page_title="Survey Data Cleaning App",
         page_icon="📊",
     )
-    
+
     # アプリケーションの状態を初期化
     initialize_app_state()
 
