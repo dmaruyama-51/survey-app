@@ -1,5 +1,7 @@
-import streamlit as st
 import pandas as pd
+import streamlit as st
+
+from src.core.dataframe_operation import create_final_dataset
 from src.utils.logger_config import logger
 
 
@@ -23,3 +25,17 @@ def display_data_summary(df: pd.DataFrame) -> None:
     except Exception as e:
         logger.error(f"Error displaying data summary: {str(e)}")
         st.error("An error occurred while displaying the data.")
+
+
+def disaply_final_dataset(rows_to_keep: list) -> pd.DataFrame:
+    """最終的にダウンロードされるデータセットを作成してUIに表示"""
+    final_cleaned_df = create_final_dataset(
+        st.session_state.cleaned_df, st.session_state.removed_df, rows_to_keep
+    )
+
+    if rows_to_keep:
+        st.write(
+            f"Final dataset will keep {len(rows_to_keep)} previously removed rows."
+        )
+
+    return final_cleaned_df

@@ -1,8 +1,9 @@
 import pandas as pd
+
 from src.core.manipulation import (
-    reverse_score,
-    prepare_download_data,
     calculate_scale_scores,
+    prepare_download_data,
+    reverse_score,
 )
 
 
