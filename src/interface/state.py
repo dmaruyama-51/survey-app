@@ -1,7 +1,9 @@
-import streamlit as st
+from typing import List, Tuple
+
 import pandas as pd
+import streamlit as st
+
 from src.core.cleaning import remove_invalid_responses
-from typing import List
 
 
 def initialize_cleaning_state(
@@ -119,3 +121,22 @@ def check_scale_scores_completion(df: pd.DataFrame | None) -> bool:
         )
         return False
     return True
+
+
+def initialize_app_state() -> None:
+    """アプリケーションの状態を初期化"""
+    if "uploaded_df" not in st.session_state:
+        st.session_state.uploaded_df = None
+    if "use_sample" not in st.session_state:
+        st.session_state.use_sample = False
+
+
+def save_uploaded_data(df: pd.DataFrame, is_sample: bool = False) -> None:
+    """アップロードされたデータを保存"""
+    st.session_state.uploaded_df = df
+    st.session_state.use_sample = is_sample
+
+
+def get_uploaded_data() -> Tuple[pd.DataFrame | None, bool]:
+    """保存されたデータを取得"""
+    return st.session_state.uploaded_df, st.session_state.use_sample

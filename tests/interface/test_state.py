@@ -1,6 +1,7 @@
-import pytest
 import pandas as pd
+import pytest
 import streamlit as st
+
 from src.interface.state import (
     check_data_settings_completion,
     check_file_upload_completion,

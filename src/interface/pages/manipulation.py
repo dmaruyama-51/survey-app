@@ -1,7 +1,39 @@
-import streamlit as st
+from typing import Dict, List, Tuple
+
 import pandas as pd
-from typing import List
+import streamlit as st
+
+from src.core.manipulation import calculate_scale_scores, reverse_score
+from src.interface.components.input import input_manipulation_settings
 from src.utils.logger_config import logger
+
+
+def render_has_reverse_items_option_section() -> bool:
+    # 逆転項目の有無を確認
+    has_reverse_items = st.checkbox(
+        "I have items that need to be reverse-scored",
+        value=False,
+        help="Check this if you need to reverse-score any items",
+    )
+    return has_reverse_items
+
+
+def render_manipulation_settings_section(
+    df: pd.DataFrame,
+) -> Tuple[List[str], int, pd.DataFrame]:
+    """データ操作設定セクションを表示"""
+    try:
+        scale_points, reverse_columns = input_manipulation_settings(df)
+
+        if reverse_columns:
+            reversed_df = reverse_score(df, reverse_columns, scale_points)
+        else:
+            reversed_df = df.copy()
+        return reverse_columns, scale_points, reversed_df
+
+    except Exception as e:
+        logger.error(f"Error in manipulation settings: {str(e)}")
+        raise
 
 
 def render_manipulation_preview_section(
@@ -105,3 +137,64 @@ def render_manipulation_preview_section(
         logger.error(f"Manipulation preview error: {str(e)}")
         st.error("An error occurred while displaying the preview.")
         raise
+
+
+def render_scale_score_section(df: pd.DataFrame) -> pd.DataFrame:
+    """因子得点計算のUIセクションを表示"""
+    st.markdown("#### Scale Score Calculation")
+    st.write(
+        "Create scale scores by selecting items that belong to each scale. "
+        "Both total scores and mean scores will be calculated."
+    )
+
+    # 因子の数を選択
+    num_scales = st.number_input(
+        "Number of scales to create",
+        min_value=1,
+        max_value=10,
+        value=1,
+        help="Enter the number of different scales you want to calculate",
+    )
+
+    scales_config: Dict[str, List[str]] = {}
+    df_with_scores = df.copy()
+
+    # 各因子の設定
+    for i in range(num_scales):
+        st.markdown(f"##### Scale {i + 1}")
+
+        # 因子名の入力
+        scale_name = st.text_input(
+            f"Scale {i + 1} name",
+            value=f"scale_{i + 1}",
+            key=f"scale_name_{i}",
+            help="Enter a name for this scale (e.g., 'anxiety', 'satisfaction')",
+        )
+
+        # 項目の選択（すでに逆転済みの項目も含める）
+        scale_items: List[str] = st.multiselect(
+            f"Select items for {scale_name}",
+            options=df.columns,
+            key=f"scale_items_{i}",
+            help="Select all items that belong to this scale",
+        )
+
+        if scale_items:
+            scales_config[scale_name] = scale_items
+            # 因子得点を計算
+            df_with_scores = calculate_scale_scores(
+                df_with_scores, scale_items, scale_name
+            )
+
+            # プレビューを表示
+            with st.expander(f"Preview {scale_name} scores"):
+                preview_cols = scale_items + [
+                    f"{scale_name}_total",
+                    f"{scale_name}_mean",
+                ]
+                st.dataframe(
+                    df_with_scores[preview_cols].head(),
+                    use_container_width=True,
+                )
+
+    return df_with_scores

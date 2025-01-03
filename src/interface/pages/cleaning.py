@@ -1,20 +1,41 @@
-import streamlit as st
+from typing import Tuple
+
 import pandas as pd
-from src.utils.logger_config import logger
-from src.interface.state import initialize_cleaning_state, reset_cleaning_state
-from src.interface.components.cleaning_options import (
-    render_cleaning_options,
-    render_removed_records_editor,
+import streamlit as st
+
+from src.interface.components.display import disaply_final_dataset
+from src.interface.components.input import (
+    input_cleaning_options,
+    input_column_selection,
+    input_keep_records,
+    input_likert_scale_selection,
 )
-from src.core.dataframe_operation import create_final_dataset
+from src.interface.state import initialize_cleaning_state, reset_cleaning_state
+from src.utils.logger_config import logger
 
 
-def process_data_cleaning_and_export(
+def render_data_settings_section(
+    df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, pd.DataFrame, int]:
+    """データ設定セクションを表示"""
+    try:
+        df_to_process, df_not_to_process = input_column_selection(df)
+        likert_scale = input_likert_scale_selection()
+
+        return df_to_process, df_not_to_process, likert_scale
+
+    except Exception as e:
+        logger.error(f"Data settings error: {str(e)}")
+        st.error("An error occurred while configuring data settings.")
+        raise
+
+
+def render_process_data_cleaning_and_export_section(
     df_to_process: pd.DataFrame, df_not_to_process: pd.DataFrame, likert_scale_case: int
 ) -> pd.DataFrame:
     """データクリーニングの実行とエクスポート処理"""
     try:
-        cleaning_reqs = render_cleaning_options()
+        cleaning_reqs = input_cleaning_options()
 
         if "cleaning_executed" not in st.session_state:
             st.session_state.cleaning_executed = False
@@ -46,13 +67,8 @@ def process_data_cleaning_and_export(
                     "If no rows are selected, the downloaded data will exclude all records shown here."
                 )
 
-                rows_to_keep = render_removed_records_editor()
-
-                final_cleaned_df = create_final_dataset(
-                    st.session_state.cleaned_df,
-                    st.session_state.removed_df,
-                    rows_to_keep,
-                )
+                rows_to_keep = input_keep_records()
+                final_cleaned_df = disaply_final_dataset(rows_to_keep)
 
                 col1, col2 = st.columns([1, 4])
                 with col1:
