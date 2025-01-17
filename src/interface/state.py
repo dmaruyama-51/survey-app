@@ -25,6 +25,7 @@ def initialize_cleaning_state(
 def check_data_settings_completion(
     remove_cols: list[str],
     likert_scale: int | None,
+    df_to_process: pd.DataFrame,
     exclude_option: str = "No, process all columns",
 ) -> bool:
     """
@@ -32,6 +33,7 @@ def check_data_settings_completion(
     Args:
         remove_cols (list[str]): 除外するカラムのリスト
         likert_scale (int | None): 選択されたリッカート尺度のポイント数
+        df_to_process (pd.DataFrame): 処理対象のデータフレーム
         exclude_option (str): カラム除外オプションの選択状態
     Returns:
         bool: 要件を満たしているかどうか
@@ -44,6 +46,15 @@ def check_data_settings_completion(
         st.info(
             "Please select columns to exclude or choose 'No, process all columns'.",
             icon="ℹ️",
+        )
+        return False
+
+    # 文字列カラムのチェック
+    string_columns = df_to_process.select_dtypes(include=["object"]).columns
+    if not string_columns.empty:
+        st.warning(
+            f"The following columns contain string values and must be excluded: {', '.join(string_columns)}",
+            icon="⚠️",
         )
         return False
 

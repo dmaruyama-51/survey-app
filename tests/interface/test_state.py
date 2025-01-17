@@ -24,19 +24,28 @@ def test_check_file_upload_completion():
 
 def test_check_data_settings_completion():
     """Step2の完了チェック機能のテスト"""
+    # テスト用のデータフレーム作成
+    df_numeric = pd.DataFrame({"Q1": [1, 2, 3], "Q2": [4, 5, 6]})
+    df_with_string = pd.DataFrame({"Q1": [1, 2, 3], "Q2": ["a", "b", "c"]})
+
     # 両方とも未設定
-    assert not check_data_settings_completion([], None)
+    assert not check_data_settings_completion([], None, df_numeric)
 
     # カラムのみ設定（除外オプションがYesの場合）
     assert not check_data_settings_completion(
-        [], None, exclude_option="Yes, select columns to exclude"
+        [], None, df_numeric, exclude_option="Yes, select columns to exclude"
     )
 
     # リッカート尺度のみ設定（除外オプションがNoの場合）
-    assert check_data_settings_completion([], 5)
+    assert check_data_settings_completion([], 5, df_numeric)
 
     # 両方とも設定
-    assert check_data_settings_completion(["col1"], 5, "Yes, select columns to exclude")
+    assert check_data_settings_completion(
+        ["col1"], 5, df_numeric, "Yes, select columns to exclude"
+    )
+
+    # 文字列カラムを含むデータフレーム
+    assert not check_data_settings_completion([], 5, df_with_string)
 
 
 def test_check_manipulation_settings_completion():
