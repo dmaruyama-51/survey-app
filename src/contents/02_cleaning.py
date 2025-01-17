@@ -63,6 +63,7 @@ try:
             step2_completed = check_data_settings_completion(
                 remove_cols=df_not_to_process.columns.tolist(),
                 likert_scale=likert_scale,
+                df_to_process=df_to_process,
                 exclude_option=exclude_option,
             )
 
