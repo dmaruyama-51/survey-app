@@ -27,14 +27,16 @@ def test_check_data_settings_completion():
     # 両方とも未設定
     assert not check_data_settings_completion([], None)
 
-    # カラムのみ設定
-    assert not check_data_settings_completion(["col1"], None)
+    # カラムのみ設定（除外オプションがYesの場合）
+    assert not check_data_settings_completion(
+        [], None, exclude_option="Yes, select columns to exclude"
+    )
 
-    # リッカート尺度のみ設定
-    assert not check_data_settings_completion([], 5)
+    # リッカート尺度のみ設定（除外オプションがNoの場合）
+    assert check_data_settings_completion([], 5)
 
     # 両方とも設定
-    assert check_data_settings_completion(["col1"], 5)
+    assert check_data_settings_completion(["col1"], 5, "Yes, select columns to exclude")
 
 
 def test_check_manipulation_settings_completion():
