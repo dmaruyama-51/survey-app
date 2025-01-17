@@ -66,7 +66,7 @@ def input_file_upload() -> pd.DataFrame | None:
 # ==============================
 
 
-def input_column_selection(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def input_column_selection(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, str]:
     """カラム選択UIを表示"""
     try:
         st.markdown(
@@ -77,13 +77,21 @@ def input_column_selection(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame
             "Select columns that should not be processed as numeric data (e.g., ID, category columns)"
         )
 
-        remove_cols: list[str] = st.multiselect(
-            "Select columns to exclude",
-            df.columns,
-            help="You can select multiple columns. Selected columns will be excluded from the analysis.",
+        exclude_columns = st.radio(
+            "Would you like to exclude any columns?",
+            ["No, process all columns", "Yes, select columns to exclude"],
+            help="Choose whether to exclude specific columns from analysis",
         )
 
-        return split_dataframe(df, remove_cols)
+        remove_cols: list[str] = []
+        if exclude_columns == "Yes, select columns to exclude":
+            remove_cols = st.multiselect(
+                "Select columns to exclude",
+                df.columns,
+                help="You can select multiple columns. Selected columns will be excluded from the analysis.",
+            )
+
+        return *split_dataframe(df, remove_cols), exclude_columns
 
     except Exception as e:
         logger.error(f"Column selection error: {str(e)}")
