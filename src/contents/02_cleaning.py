@@ -55,7 +55,7 @@ try:
             unsafe_allow_html=True,
         )
         try:
-            df_to_process, df_not_to_process, likert_scale = (
+            df_to_process, df_not_to_process, likert_scale, exclude_option = (
                 render_data_settings_section(df)
             )
 
@@ -63,6 +63,7 @@ try:
             step2_completed = check_data_settings_completion(
                 remove_cols=df_not_to_process.columns.tolist(),
                 likert_scale=likert_scale,
+                exclude_option=exclude_option,
             )
 
             # -----------------------------------

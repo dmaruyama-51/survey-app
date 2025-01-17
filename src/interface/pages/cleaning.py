@@ -10,19 +10,25 @@ from src.interface.components.input import (
     input_keep_records,
     input_likert_scale_selection,
 )
-from src.interface.state import initialize_cleaning_state, reset_cleaning_state
+from src.interface.state import (
+    initialize_cleaning_state,
+    reset_cleaning_state,
+)
 from src.utils.logger_config import logger
 
 
 def render_data_settings_section(
     df: pd.DataFrame,
-) -> Tuple[pd.DataFrame, pd.DataFrame, int]:
+) -> Tuple[pd.DataFrame, pd.DataFrame, int, str]:
     """データ設定セクションを表示"""
     try:
-        df_to_process, df_not_to_process = input_column_selection(df)
+        # カラム選択
+        df_to_process, df_not_to_process, exclude_option = input_column_selection(df)
+
+        # リッカート尺度の選択
         likert_scale = input_likert_scale_selection()
 
-        return df_to_process, df_not_to_process, likert_scale
+        return df_to_process, df_not_to_process, likert_scale, exclude_option
 
     except Exception as e:
         logger.error(f"Data settings error: {str(e)}")

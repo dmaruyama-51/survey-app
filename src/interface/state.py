@@ -23,28 +23,30 @@ def initialize_cleaning_state(
 
 
 def check_data_settings_completion(
-    remove_cols: list[str], likert_scale: int | None
+    remove_cols: list[str],
+    likert_scale: int | None,
+    exclude_option: str = "No, process all columns",
 ) -> bool:
     """
     Step2の要件が満たされているかチェックする
     Args:
         remove_cols (list[str]): 除外するカラムのリスト
         likert_scale (int | None): 選択されたリッカート尺度のポイント数
+        exclude_option (str): カラム除外オプションの選択状態
     Returns:
         bool: 要件を満たしているかどうか
     """
-    if not remove_cols and likert_scale is None:
+    if likert_scale is None:
+        st.info("Please select the number of Likert scale points.", icon="ℹ️")
+        return False
+
+    if exclude_option == "Yes, select columns to exclude" and not remove_cols:
         st.info(
-            "Please start by selecting columns to exclude and configuring the Likert scale.",
+            "Please select columns to exclude or choose 'No, process all columns'.",
             icon="ℹ️",
         )
         return False
-    elif not remove_cols:
-        st.info("Please select columns to exclude from numeric processing.", icon="ℹ️")
-        return False
-    elif likert_scale is None:
-        st.info("Please select the number of Likert scale points.", icon="ℹ️")
-        return False
+
     return True
 
 
