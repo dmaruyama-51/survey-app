@@ -66,17 +66,26 @@ def remove_out_of_range_values(df: pd.DataFrame, likert_scale_case: int) -> List
         raise
 
 
-def remove_step_pattern_responses(df: pd.DataFrame) -> List[int]:
+def remove_step_pattern_responses(df: pd.DataFrame, likert_scale: int) -> List[int]:
     """
-    厳密な階段状のパターンを持つ回答の行番号を取得
-    - 連続的な増加または減少
-    - 増加後減少、または減少後増加
-    - 連続的な増加/減少が途中で1に戻って再度増加するパターン
-    同値を含むパターンは検出対象外とする
-    ストレートラインも検出対象外
+    階段パターンの回答を判定
+
+    【要件】
+        1. 各被験者の回答は、1〜ユーザーが指定したポイント数（例: 7, 5, 10 など）の整数が20項目分、リスト形式で与えられるものとします。
+        2. ユーザーはリッカート尺度のポイント数を自由に指定できるようにし、関数の引数としてその尺度の最大値（例: 7）を受け取ります。
+        3. 「階段状パターン」とは、隣接する回答が常に ±1 の変化を示すパターンです。ただし、以下の循環ケースを考慮してください。
+        - 昇順の場合:
+            - 通常ケース：前の回答が指定された最大値以外の場合、次の回答は「前の回答 + 1」でなければならない。
+            - 循環ケース：前の回答が指定された最大値の場合、次の回答は 1 である必要がある。
+        - 降順の場合:
+            - 通常ケース：前の回答が 1 以外の場合、次の回答は「前の回答 - 1」でなければならない。
+            - 循環ケース：前の回答が 1 の場合、次の回答は指定された最大値である必要がある。
+        4. 山型パターン（昇順から降順に変わる）や谷型パターン（降順から昇順に変わる）も階段パターンとして検出します。
+        5. 与えられたリスト全体が、上記のパターンに該当する場合は remove_rows に行番号を追加
 
     Args:
         df (pd.DataFrame): 入力データフレーム
+        likert_scale (int): リッカート尺度のポイント数
     Returns:
         List[int]: 階段状パターンの行番号のリスト
     """
@@ -88,57 +97,41 @@ def remove_step_pattern_responses(df: pd.DataFrame) -> List[int]:
             if len(set(values)) == 1:
                 continue
 
-            # 差分を計算
-            diffs = [values[i + 1] - values[i] for i in range(len(values) - 1)]
-
-            # 単調増加または単調減少のパターンをチェック（同値を含まない）
-            if all(d > 0 for d in diffs) or all(d < 0 for d in diffs):
-                remove_rows.append(idx)
-                continue
-
-            # 増加後減少または減少後増加のパターンをチェック
-            peak_idx = None
-            valley_idx = None
-
-            # ピークを探す（厳密な増加後減少）
-            for i in range(1, len(values) - 1):
-                if all(values[j] < values[j + 1] for j in range(i)) and all(
-                    values[j] > values[j + 1] for j in range(i, len(values) - 1)
-                ):
-                    peak_idx = i
-                    break
-
-            # 谷を探す（厳密な減少後増加）
-            for i in range(1, len(values) - 1):
-                if all(values[j] > values[j + 1] for j in range(i)) and all(
-                    values[j] < values[j + 1] for j in range(i, len(values) - 1)
-                ):
-                    valley_idx = i
-                    break
-
-            # 連続増加が途中で1に戻るパターンをチェック
-            is_reset_pattern = False
-            segments = []
-            current_segment = [values[0]]
-
-            for i in range(1, len(values)):
-                if values[i] == 1 and i < len(values) - 1:
-                    if len(current_segment) > 1:
-                        segments.append(current_segment)
-                    current_segment = [values[i]]
+            # 階段パターンのチェック（昇順・降順・山型・谷型を含む）
+            is_step_pattern = True
+            
+            # 前の値と現在の値の差分を記録
+            prev_diff = None
+            
+            for i in range(len(values) - 1):
+                current_val = values[i]
+                next_val = values[i + 1]
+                
+                # 通常の昇順ケース
+                if current_val < likert_scale and next_val == current_val + 1:
+                    current_diff = 1
+                # 昇順の循環ケース
+                elif current_val == likert_scale and next_val == 1:
+                    current_diff = 1
+                # 通常の降順ケース
+                elif current_val > 1 and next_val == current_val - 1:
+                    current_diff = -1
+                # 降順の循環ケース
+                elif current_val == 1 and next_val == likert_scale:
+                    current_diff = -1
+                # 階段パターンではない
                 else:
-                    current_segment.append(values[i])
+                    is_step_pattern = False
+                    break
+                
+                # 方向の変化をチェック（山型・谷型パターンの検出）
+                if prev_diff is not None and prev_diff != current_diff:
+                    # 方向が変わっても階段パターンとして検出する
+                    pass
+                
+                prev_diff = current_diff
 
-            if len(current_segment) > 1:
-                segments.append(current_segment)
-
-            if len(segments) > 0:
-                is_reset_pattern = all(
-                    all(seg[j] < seg[j + 1] for j in range(len(seg) - 1))
-                    for seg in segments
-                )
-
-            if peak_idx is not None or valley_idx is not None or is_reset_pattern:
+            if is_step_pattern:
                 remove_rows.append(idx)
 
         if remove_rows:
@@ -172,7 +165,7 @@ def remove_invalid_responses(
             remove_rows.extend(remove_out_of_range_values(df, likert_scale))
 
         if remove_step_pattern:
-            remove_rows.extend(remove_step_pattern_responses(df))
+            remove_rows.extend(remove_step_pattern_responses(df, likert_scale))
 
         # 重複を除去
         remove_rows = list(set(remove_rows))
