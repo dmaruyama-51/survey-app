@@ -99,14 +99,14 @@ def remove_step_pattern_responses(df: pd.DataFrame, likert_scale: int) -> List[i
 
             # 階段パターンのチェック（昇順・降順・山型・谷型を含む）
             is_step_pattern = True
-            
+
             # 前の値と現在の値の差分を記録
             prev_diff = None
-            
+
             for i in range(len(values) - 1):
                 current_val = values[i]
                 next_val = values[i + 1]
-                
+
                 # 通常の昇順ケース
                 if current_val < likert_scale and next_val == current_val + 1:
                     current_diff = 1
@@ -123,12 +123,12 @@ def remove_step_pattern_responses(df: pd.DataFrame, likert_scale: int) -> List[i
                 else:
                     is_step_pattern = False
                     break
-                
+
                 # 方向の変化をチェック（山型・谷型パターンの検出）
                 if prev_diff is not None and prev_diff != current_diff:
                     # 方向が変わっても階段パターンとして検出する
                     pass
-                
+
                 prev_diff = current_diff
 
             if is_step_pattern:

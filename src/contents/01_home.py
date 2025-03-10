@@ -88,7 +88,11 @@ st.markdown("Explore and understand your data with these visualization tools:")
 
 # Data Visualization Features Table
 visualization_data = {
-    "Feature": ["Descriptive Statistics", "Distribution Visualization", "Floor and Ceiling Effect Detection"],
+    "Feature": [
+        "Descriptive Statistics",
+        "Distribution Visualization",
+        "Floor and Ceiling Effect Detection",
+    ],
     "Description": [
         "Calculate key statistics for your variables",
         "Create histograms to visualize response distributions",
