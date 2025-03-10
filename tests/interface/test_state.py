@@ -7,6 +7,7 @@ from src.interface.state import (
     check_file_upload_completion,
     check_manipulation_settings_completion,
     check_scale_scores_completion,
+    check_visualization_selection_completion,
     initialize_cleaning_state,
     reset_cleaning_state,
 )
@@ -83,6 +84,18 @@ def test_check_scale_scores_completion():
         }
     )
     assert check_scale_scores_completion(df_with_scores)
+
+
+def test_check_visualization_selection_completion():
+    """可視化用カラム選択の完了チェック機能のテスト"""
+    # 空のリストの場合（カラム未選択）
+    assert not check_visualization_selection_completion([])
+    
+    # カラムが選択されている場合
+    assert check_visualization_selection_completion(["Q1", "Q2"])
+    
+    # 1つのカラムだけ選択されている場合
+    assert check_visualization_selection_completion(["Q1"])
 
 
 def test_initialize_cleaning_state():
