@@ -54,9 +54,6 @@ try:
             "<div class='tight-header'><h4>Column Selection</h4></div>",
             unsafe_allow_html=True,
         )
-        st.write(
-            "Select columns you want to visualize. You can select multiple columns for comparison."
-        )
         
         # 数値型カラムのみを抽出
         numeric_columns = df.select_dtypes(include=['number']).columns.tolist()
@@ -64,16 +61,52 @@ try:
         if not numeric_columns:
             st.warning("No numeric columns found in the data. Visualization requires numeric data.")
         else:
-            # 複数選択可能なカラム選択UI
-            selected_columns = st.multiselect(
-                "Select columns to visualize",
-                options=numeric_columns,
-                default=numeric_columns[:2] if len(numeric_columns) >= 2 else numeric_columns,
-                help="Select one or more columns to create visualizations"
+            # 選択オプションを追加
+            selection_options = [
+                "Select individual columns",
+                "Select all columns"
+            ]
+            
+            selection_mode = st.radio(
+                "How would you like to select columns?",
+                options=selection_options,
+                horizontal=True
             )
             
+            selected_columns = []
+            
+            if selection_mode == "Select individual columns":
+                # 従来の複数選択UI
+                selected_columns = st.multiselect(
+                    "Select columns to visualize",
+                    options=numeric_columns,
+                    default=numeric_columns[:2] if len(numeric_columns) >= 2 else numeric_columns,
+                    help="Select one or more columns to create visualizations"
+                )
+                
+            elif selection_mode == "Select all columns":
+                # すべての数値カラムを選択
+                selected_columns = numeric_columns
+                st.success(f"All {len(numeric_columns)} numeric columns selected")
+                
+                # 必要に応じて除外するカラムを選択できるオプション
+                exclude_columns = st.multiselect(
+                    "Exclude columns (optional)",
+                    options=numeric_columns,
+                    default=[],
+                    help="Select columns you want to exclude from visualization"
+                )
+                
+                if exclude_columns:
+                    selected_columns = [col for col in numeric_columns if col not in exclude_columns]
+                    st.info(f"{len(selected_columns)} columns selected after exclusion")
+            
+            # 選択されたカラムの数を表示
             if selected_columns:
                 st.session_state.selected_viz_columns = selected_columns
+                
+                # 選択カラム数の表示
+                st.write(f"Selected {len(selected_columns)} columns for visualization")
                 
                 # 可視化ボタン
                 if st.button("Visualize Data", type="primary"):
@@ -136,12 +169,14 @@ try:
                     
                     # 各選択カラムのヒストグラムを表示
                     st.markdown("#### Histograms")
-                    st.write("Distribution of selected variables:")
+                
+                    display_columns = selected_columns
+                    st.write(f"Displaying histograms for {len(display_columns)} columns:")
                     
                     # 選択されたカラムの数に応じてレイアウトを調整
-                    if len(selected_columns) == 1:
+                    if len(display_columns) == 1:
                         # 1つのカラムの場合は大きく表示
-                        col = selected_columns[0]
+                        col = display_columns[0]
                         fig = px.histogram(
                             df, 
                             x=col,
@@ -182,7 +217,7 @@ try:
                     else:
                         # 複数のカラムの場合は2列のグリッドで表示
                         cols = st.columns(2)
-                        for i, col in enumerate(selected_columns):
+                        for i, col in enumerate(display_columns):
                             with cols[i % 2]:
                                 fig = px.histogram(
                                     df, 
