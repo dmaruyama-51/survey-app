@@ -1,4 +1,4 @@
-# Survey Data Cleaning App
+# Survey Data Preprocessing App
 
 ## Description
 
