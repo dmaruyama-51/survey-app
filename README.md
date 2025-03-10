@@ -5,6 +5,9 @@
 This is a web application for efficiently preprocessing social survey data collected using Likert scales before subjecting them to statistical analysis. Specifically, it can perform everything from cleaning inappropriate responses to creating reversal items and calculating factor scores.  
 Built with Streamlit and Python, the application offers intuitive, user-friendly tools for handling common data issues in survey research. The application is deployed on Google Cloud Run, ensuring scalability and ease of access for users.
 
+The application is accessible at [here](https://survey-app-1037219502389.asia-northeast1.run.app/)
+
+
 ## Features
 
 ### Data Cleaning Operations
