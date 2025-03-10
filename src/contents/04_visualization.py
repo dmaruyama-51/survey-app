@@ -1,5 +1,7 @@
 import streamlit as st
 import plotly.express as px
+import numpy as np
+import pandas as pd
 from src.interface.pages.common import render_file_upload_section
 from src.interface.state import check_file_upload_completion
 from src.utils.logger_config import logger
@@ -83,6 +85,55 @@ try:
                         unsafe_allow_html=True,
                     )
                     
+                    # 統計情報のサマリテーブルを作成
+                    st.markdown("#### Statistical Summary")
+                    
+                    # 統計情報を格納するデータフレームを作成
+                    stats_data = []
+                    
+                    for col in selected_columns:
+                        mean_val = df[col].mean()
+                        std_val = df[col].std()
+                        min_val = df[col].min()
+                        max_val = df[col].max()
+                        
+                        # 天井効果と床効果の判定
+                        ceiling_effect = (mean_val + std_val) > max_val
+                        floor_effect = (mean_val - std_val) < min_val
+                        
+                        # 効果の表示用テキスト
+                        ceiling_text = "⚠️ Yes" if ceiling_effect else "No"
+                        floor_text = "⚠️ Yes" if floor_effect else "No"
+                        
+                        # データを追加
+                        stats_data.append({
+                            "Variable": col,
+                            "Mean": f"{mean_val:.2f}",
+                            "SD": f"{std_val:.2f}",
+                            "Min": f"{min_val:.2f}",
+                            "Max": f"{max_val:.2f}",
+                            "Mean+SD": f"{(mean_val+std_val):.2f}",
+                            "Mean-SD": f"{(mean_val-std_val):.2f}",
+                            "Ceiling Effect": ceiling_text,
+                            "Floor Effect": floor_text
+                        })
+                    
+                    # データフレームに変換
+                    stats_df = pd.DataFrame(stats_data)
+                    
+                    # サマリテーブルを表示
+                    st.dataframe(stats_df, use_container_width=True, hide_index=True)
+                    
+                    # 効果の説明
+                    with st.expander("What are Ceiling and Floor Effects?"):
+                        st.markdown("""
+                        **Ceiling Effect**: Occurs when a measure has a distinct upper limit for potential responses and a large concentration of participants score at or near this limit. Statistically detected when Mean + SD > Maximum value.
+                        
+                        **Floor Effect**: Occurs when a measure has a distinct lower limit for potential responses and a large concentration of participants score at or near this limit. Statistically detected when Mean - SD < Minimum value.
+                        
+                        These effects can limit the ability to distinguish between participants at the extremes and may reduce the validity of the measure.
+                        """)
+                    
                     # 各選択カラムのヒストグラムを表示
                     st.markdown("#### Histograms")
                     st.write("Distribution of selected variables:")
@@ -106,6 +157,28 @@ try:
                             height=500
                         )
                         st.plotly_chart(fig, use_container_width=True)
+                        
+                        # 統計情報を計算
+                        mean_val = df[col].mean()
+                        std_val = df[col].std()
+                        min_val = df[col].min()
+                        max_val = df[col].max()
+                        
+                        # 天井効果と床効果の判定
+                        ceiling_effect = (mean_val + std_val) > max_val
+                        floor_effect = (mean_val - std_val) < min_val
+                        
+                        # 統計情報と効果の表示
+                        stats_md = f"**Statistics for {col}:**  \n"
+                        stats_md += f"Mean: {mean_val:.2f}  \n"
+                        stats_md += f"Standard Deviation: {std_val:.2f}  \n"
+                        
+                        if ceiling_effect:
+                            stats_md += f"⚠️ **Ceiling Effect Detected**: Mean + SD ({mean_val+std_val:.2f}) > Max ({max_val:.2f})  \n"
+                        if floor_effect:
+                            stats_md += f"⚠️ **Floor Effect Detected**: Mean - SD ({mean_val-std_val:.2f}) < Min ({min_val:.2f})  \n"
+                        
+                        st.markdown(stats_md)
                     else:
                         # 複数のカラムの場合は2列のグリッドで表示
                         cols = st.columns(2)
@@ -126,6 +199,28 @@ try:
                                     height=350
                                 )
                                 st.plotly_chart(fig, use_container_width=True)
+                                
+                                # 統計情報を計算
+                                mean_val = df[col].mean()
+                                std_val = df[col].std()
+                                min_val = df[col].min()
+                                max_val = df[col].max()
+                                
+                                # 天井効果と床効果の判定
+                                ceiling_effect = (mean_val + std_val) > max_val
+                                floor_effect = (mean_val - std_val) < min_val
+                                
+                                # 統計情報と効果の表示
+                                stats_md = f"**Statistics for {col}:**  \n"
+                                stats_md += f"Mean: {mean_val:.2f}  \n"
+                                stats_md += f"Standard Deviation: {std_val:.2f}  \n"
+                                
+                                if ceiling_effect:
+                                    stats_md += f"⚠️ **Ceiling Effect Detected**: Mean + SD ({mean_val+std_val:.2f}) > Max ({max_val:.2f})  \n"
+                                if floor_effect:
+                                    stats_md += f"⚠️ **Floor Effect Detected**: Mean - SD ({mean_val-std_val:.2f}) < Min ({min_val:.2f})  \n"
+                                
+                                st.markdown(stats_md)
             else:
                 st.info("Please select at least one column to visualize", icon="ℹ️")
 
