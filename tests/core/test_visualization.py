@@ -14,10 +14,10 @@ def test_calculate_statistics():
     # テストデータの作成
     test_data = {"Q1": [1, 2, 3, 4, 5]}
     df = pd.DataFrame(test_data)
-    
+
     # 統計量の計算
     stats = calculate_statistics(df, "Q1")
-    
+
     # 結果の検証
     assert stats["mean"] == 3.0
     assert stats["std"] == pytest.approx(1.5811, abs=0.001)
@@ -37,7 +37,7 @@ def test_check_ceiling_effect():
         "mean_plus_std": 5.3,  # mean + std > max
     }
     assert check_ceiling_effect(stats_with_ceiling) is True
-    
+
     # 天井効果がない場合
     stats_without_ceiling = {
         "mean": 3.0,
@@ -58,7 +58,7 @@ def test_check_floor_effect():
         "mean_minus_std": 0.7,  # mean - std < min
     }
     assert check_floor_effect(stats_with_floor) is True
-    
+
     # 床効果がない場合
     stats_without_floor = {
         "mean": 3.0,
@@ -78,26 +78,26 @@ def test_create_statistics_summary():
         "Q3": [1, 1, 1, 2, 1],  # 床効果あり
     }
     df = pd.DataFrame(test_data)
-    
+
     # 統計情報サマリーの作成
     summary_df = create_statistics_summary(df, ["Q1", "Q2", "Q3"])
-    
+
     # 結果の検証
     assert len(summary_df) == 3  # 3つのカラムに対する統計情報
-    
+
     # Q1の検証（通常の分布）
     q1_row = summary_df[summary_df["Variable"] == "Q1"].iloc[0]
     assert q1_row["Ceiling Effect"] == "No"
     assert q1_row["Floor Effect"] == "No"
-    
+
     # Q2の検証（天井効果あり）
     q2_row = summary_df[summary_df["Variable"] == "Q2"].iloc[0]
     assert q2_row["Ceiling Effect"] == "⚠️ Yes"
-    
+
     # Q3の検証（床効果あり）
     q3_row = summary_df[summary_df["Variable"] == "Q3"].iloc[0]
     assert q3_row["Floor Effect"] == "⚠️ Yes"
-    
+
     # 数値フォーマットの検証
     assert "." in q1_row["Mean"]  # 小数点以下が表示されていることを確認
     assert "." in q1_row["SD"]

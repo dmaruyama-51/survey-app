@@ -90,10 +90,10 @@ def test_check_visualization_selection_completion():
     """可視化用カラム選択の完了チェック機能のテスト"""
     # 空のリストの場合（カラム未選択）
     assert not check_visualization_selection_completion([])
-    
+
     # カラムが選択されている場合
     assert check_visualization_selection_completion(["Q1", "Q2"])
-    
+
     # 1つのカラムだけ選択されている場合
     assert check_visualization_selection_completion(["Q1"])
 
