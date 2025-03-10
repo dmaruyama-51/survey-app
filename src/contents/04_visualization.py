@@ -3,7 +3,7 @@ import plotly.express as px
 import numpy as np
 import pandas as pd
 from src.interface.pages.common import render_file_upload_section
-from src.interface.state import check_file_upload_completion
+from src.interface.state import check_file_upload_completion, check_visualization_selection_completion
 from src.utils.logger_config import logger
 
 try:
@@ -107,17 +107,18 @@ try:
                 
                 # 選択カラム数の表示
                 st.write(f"Selected {len(selected_columns)} columns for visualization")
+            
+            if check_visualization_selection_completion(selected_columns):
+                # -----------------------------------
+                # Step3. Data Visualization
+                # -----------------------------------
+                st.markdown(
+                    "<div class='tight-header step-header'><h3>📌 Step 3: Data Visualization</h3></div><hr/>",
+                    unsafe_allow_html=True,
+                )
                 
                 # 可視化ボタン
                 if st.button("Visualize Data", type="primary"):
-                    # -----------------------------------
-                    # Step3. Data Visualization
-                    # -----------------------------------
-                    st.markdown(
-                        "<div class='tight-header step-header'><h3>📌 Step 3: Data Visualization</h3></div><hr/>",
-                        unsafe_allow_html=True,
-                    )
-                    
                     # 統計情報のサマリテーブルを作成
                     st.markdown("#### Statistical Summary")
                     
@@ -169,8 +170,18 @@ try:
                     
                     # 各選択カラムのヒストグラムを表示
                     st.markdown("#### Histograms")
-                
-                    display_columns = selected_columns
+                    
+                    # 多数のカラムがある場合の警告
+                    if len(selected_columns) > 10:
+                        st.warning(f"You selected {len(selected_columns)} columns. Displaying histograms for the first 10 columns only.")
+                        display_columns = selected_columns[:10]
+                        
+                        # 残りのカラムを表示するオプション
+                        if st.checkbox("Show all selected columns"):
+                            display_columns = selected_columns
+                    else:
+                        display_columns = selected_columns
+                    
                     st.write(f"Displaying histograms for {len(display_columns)} columns:")
                     
                     # 選択されたカラムの数に応じてレイアウトを調整
@@ -207,6 +218,7 @@ try:
                         stats_md = f"**Statistics for {col}:**  \n"
                         stats_md += f"Mean: {mean_val:.2f}  \n"
                         stats_md += f"Standard Deviation: {std_val:.2f}  \n"
+                        stats_md += f"Min: {min_val:.2f}, Max: {max_val:.2f}  \n"
                         
                         if ceiling_effect:
                             stats_md += f"⚠️ **Ceiling Effect Detected**: Mean + SD ({mean_val+std_val:.2f}) > Max ({max_val:.2f})  \n"
@@ -249,6 +261,7 @@ try:
                                 stats_md = f"**Statistics for {col}:**  \n"
                                 stats_md += f"Mean: {mean_val:.2f}  \n"
                                 stats_md += f"Standard Deviation: {std_val:.2f}  \n"
+                                stats_md += f"Min: {min_val:.2f}, Max: {max_val:.2f}  \n"
                                 
                                 if ceiling_effect:
                                     stats_md += f"⚠️ **Ceiling Effect Detected**: Mean + SD ({mean_val+std_val:.2f}) > Max ({max_val:.2f})  \n"
@@ -256,8 +269,6 @@ try:
                                     stats_md += f"⚠️ **Floor Effect Detected**: Mean - SD ({mean_val-std_val:.2f}) < Min ({min_val:.2f})  \n"
                                 
                                 st.markdown(stats_md)
-            else:
-                st.info("Please select at least one column to visualize", icon="ℹ️")
 
 except Exception as e:
     logger.error(f"Application error: {str(e)}")
