@@ -1,9 +1,12 @@
-# Survey Data Cleaning App
+# Survey Data Preprocessing App
 
 ## Description
 
 This is a web application for efficiently preprocessing social survey data collected using Likert scales before subjecting them to statistical analysis. Specifically, it can perform everything from cleaning inappropriate responses to creating reversal items and calculating factor scores.  
 Built with Streamlit and Python, the application offers intuitive, user-friendly tools for handling common data issues in survey research. The application is deployed on Google Cloud Run, ensuring scalability and ease of access for users.
+
+The application is accessible at [here](https://survey-app-1037219502389.asia-northeast1.run.app/)
+
 
 ## Features
 
@@ -19,6 +22,11 @@ Built with Streamlit and Python, the application offers intuitive, user-friendly
    - Creates total scores and mean scores for multiple scales
    - Supports up to 10 different scales
    - Allows flexible item selection for each scale
+
+### Data Visualization Operations
+1. **Descriptive Statistics**: Calculates and displays key statistics (mean, median, standard deviation, etc.) for selected variables.
+2. **Distribution Visualization**: Creates histograms to visualize the distribution of survey responses.
+3. **Floor and Ceiling Effect Detection**: Automatically identifies variables that may suffer from floor or ceiling effects.
 
 ## Technical Stack
 

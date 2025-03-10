@@ -80,12 +80,39 @@ manipulation_data = {
 
 st.table(manipulation_data)
 
+st.markdown(
+    "### Data Visualization",
+    unsafe_allow_html=True,
+)
+st.markdown("Explore and understand your data with these visualization tools:")
+
+# Data Visualization Features Table
+visualization_data = {
+    "Feature": [
+        "Descriptive Statistics",
+        "Distribution Visualization",
+        "Floor and Ceiling Effect Detection",
+    ],
+    "Description": [
+        "Calculate key statistics for your variables",
+        "Create histograms to visualize response distributions",
+        "Identify variables with potential floor or ceiling effects",
+    ],
+    "Benefits": [
+        "Understand the central tendencies and spread of your data",
+        "Gain insights into the shape and patterns of your responses",
+        "Detect potential measurement issues in your scales",
+    ],
+}
+
+st.table(visualization_data)
+
 # Add call-to-action buttons
 st.markdown(
     "<div class='tight-header'><h2>🚀 Get Started</h2></div><hr/>",
     unsafe_allow_html=True,
 )
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     st.info(
@@ -97,6 +124,12 @@ with col2:
     st.info(
         "Need to manipulate your data? Select **Data Manipulation** from the sidebar.",
         icon="🔧",
+    )
+
+with col3:
+    st.info(
+        "Want to visualize your data? Go to the **Data Visualization** page from the sidebar.",
+        icon="📊",
     )
 
 st.markdown(

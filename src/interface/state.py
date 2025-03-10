@@ -153,3 +153,17 @@ def save_uploaded_data(df: pd.DataFrame, is_sample: bool = False) -> None:
 def get_uploaded_data() -> Tuple[pd.DataFrame | None, bool]:
     """保存されたデータを取得"""
     return st.session_state.uploaded_df, st.session_state.use_sample
+
+
+def check_visualization_selection_completion(selected_columns: list) -> bool:
+    """
+    Step2（可視化用カラム選択）の要件が満たされているかチェック
+    Args:
+        selected_columns (list): 選択された可視化用カラムのリスト
+    Returns:
+        bool: 要件を満たしているかどうか
+    """
+    if not selected_columns:
+        st.info("Please select at least one column to visualize.", icon="ℹ️")
+        return False
+    return True
