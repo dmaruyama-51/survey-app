@@ -20,6 +20,11 @@ Built with Streamlit and Python, the application offers intuitive, user-friendly
    - Supports up to 10 different scales
    - Allows flexible item selection for each scale
 
+### Data Visualization Operations
+1. **Descriptive Statistics**: Calculates and displays key statistics (mean, median, standard deviation, etc.) for selected variables.
+2. **Distribution Visualization**: Creates histograms to visualize the distribution of survey responses.
+3. **Floor and Ceiling Effect Detection**: Automatically identifies variables that may suffer from floor or ceiling effects.
+
 ## Technical Stack
 
 - Language: Python 3.11
