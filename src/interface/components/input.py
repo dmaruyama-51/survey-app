@@ -188,3 +188,73 @@ def input_manipulation_settings(df: pd.DataFrame) -> Tuple[int, List[str]]:
     )
 
     return scale_points, reverse_columns
+
+
+def input_visualization_columns(df: pd.DataFrame) -> List[str]:
+    """
+    可視化するカラムを選択するUIを表示
+
+    Args:
+        df: 入力データフレーム
+
+    Returns:
+        選択されたカラム名のリスト
+    """
+    # 数値型カラムのみを抽出
+    numeric_columns = df.select_dtypes(include=["number"]).columns.tolist()
+
+    if not numeric_columns:
+        st.warning(
+            "No numeric columns found in the data. Visualization requires numeric data."
+        )
+        return []
+
+    # 選択オプションを追加
+    selection_options = ["Select individual columns", "Select all columns"]
+
+    selection_mode = st.radio(
+        "How would you like to select columns?",
+        options=selection_options,
+        horizontal=True,
+    )
+
+    selected_columns: List[str] = []
+
+    if selection_mode == "Select individual columns":
+        # 従来の複数選択UI
+        selected_columns = st.multiselect(
+            "Select columns to visualize",
+            options=numeric_columns,
+            default=numeric_columns[:2]
+            if len(numeric_columns) >= 2
+            else numeric_columns,
+            help="Select one or more columns to create visualizations",
+        )
+
+    elif selection_mode == "Select all columns":
+        # すべての数値カラムを選択
+        selected_columns = numeric_columns
+        st.success(f"All {len(numeric_columns)} numeric columns selected")
+
+        # 必要に応じて除外するカラムを選択できるオプション
+        exclude_columns: List[str] = st.multiselect(
+            "Exclude columns (optional)",
+            options=numeric_columns,
+            default=[],
+            help="Select columns you want to exclude from visualization",
+        )
+
+        if exclude_columns:
+            selected_columns = [
+                col for col in numeric_columns if col not in exclude_columns
+            ]
+            st.info(f"{len(selected_columns)} columns selected after exclusion")
+
+    # 選択されたカラムの数を表示
+    if selected_columns:
+        st.session_state.selected_viz_columns = selected_columns
+
+        # 選択カラム数の表示
+        st.write(f"Selected {len(selected_columns)} columns for visualization")
+
+    return selected_columns
