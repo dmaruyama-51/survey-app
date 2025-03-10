@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.express as px
 from src.interface.pages.common import render_file_upload_section
 from src.interface.state import check_file_upload_completion
 from src.utils.logger_config import logger
@@ -71,7 +72,60 @@ try:
             
             if selected_columns:
                 st.session_state.selected_viz_columns = selected_columns
-                st.success(f"Selected {len(selected_columns)} columns for visualization")
+                
+                # 可視化ボタン
+                if st.button("Visualize Data", type="primary"):
+                    # -----------------------------------
+                    # Step3. Data Visualization
+                    # -----------------------------------
+                    st.markdown(
+                        "<div class='tight-header step-header'><h3>📌 Step 3: Data Visualization</h3></div><hr/>",
+                        unsafe_allow_html=True,
+                    )
+                    
+                    # 各選択カラムのヒストグラムを表示
+                    st.markdown("#### Histograms")
+                    st.write("Distribution of selected variables:")
+                    
+                    # 選択されたカラムの数に応じてレイアウトを調整
+                    if len(selected_columns) == 1:
+                        # 1つのカラムの場合は大きく表示
+                        col = selected_columns[0]
+                        fig = px.histogram(
+                            df, 
+                            x=col,
+                            title=f"Distribution of {col}",
+                            labels={col: col},
+                            color_discrete_sequence=['#3366CC'],
+                            opacity=0.7
+                        )
+                        fig.update_layout(
+                            xaxis_title=col,
+                            yaxis_title="Frequency",
+                            bargap=0.1,
+                            height=500
+                        )
+                        st.plotly_chart(fig, use_container_width=True)
+                    else:
+                        # 複数のカラムの場合は2列のグリッドで表示
+                        cols = st.columns(2)
+                        for i, col in enumerate(selected_columns):
+                            with cols[i % 2]:
+                                fig = px.histogram(
+                                    df, 
+                                    x=col,
+                                    title=f"Distribution of {col}",
+                                    labels={col: col},
+                                    color_discrete_sequence=['#3366CC'],
+                                    opacity=0.7
+                                )
+                                fig.update_layout(
+                                    xaxis_title=col,
+                                    yaxis_title="Frequency",
+                                    bargap=0.1,
+                                    height=350
+                                )
+                                st.plotly_chart(fig, use_container_width=True)
             else:
                 st.info("Please select at least one column to visualize", icon="ℹ️")
 
