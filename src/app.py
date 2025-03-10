@@ -20,8 +20,11 @@ def main():
     manipulation_page = st.Page(
         "contents/03_manipulation.py", title="Data Manipulation", icon="🔧"
     )
+    visualization_page = st.Page(
+        "contents/04_visualization.py", title="Data Visualization", icon="📊"
+    )
 
-    pg = st.navigation([home_page, cleaning_page, manipulation_page])
+    pg = st.navigation([home_page, cleaning_page, manipulation_page, visualization_page])
     st.session_state.current_page = pg.title
     pg.run()
 
