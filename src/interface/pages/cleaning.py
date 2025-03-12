@@ -67,14 +67,38 @@ def render_process_data_cleaning_and_export_section(
                 )
 
             if not st.session_state.cleaned_df.empty:
-                st.markdown("#### Cleaning Results and Download")
+                st.markdown("#### Results and Download")
+
+                st.write("The following rows have been detected.")
+                st.dataframe(
+                    st.session_state.removed_df.loc[:, df_to_process.columns],
+                    use_container_width=True,
+                )
+
                 st.write(
-                    "Below are the records marked for removal. Please check any rows you wish to keep. "
+                    "If there are any rows you don't want to delete, please check the rows you wish to keep."
                     "If no rows are selected, the downloaded data will exclude all records shown here."
                 )
 
                 rows_to_keep = input_keep_records()
                 final_cleaned_df = disaply_final_dataset(rows_to_keep)
+
+                # 元のアップロードされたデータのカラム順序を取得
+                if (
+                    "uploaded_df" in st.session_state
+                    and st.session_state.uploaded_df is not None
+                ):
+                    original_columns = st.session_state.uploaded_df.columns.tolist()
+
+                    # final_cleaned_dfのカラムが元のカラムと一致するか確認
+                    if set(original_columns) == set(final_cleaned_df.columns):
+                        # カラム順序を元の順序に合わせる
+                        final_cleaned_df = final_cleaned_df[original_columns]
+                    else:
+                        # カラムが一致しない場合はログに記録
+                        logger.warning(
+                            "Column mismatch between original and cleaned data"
+                        )
 
                 col1, col2 = st.columns([1, 4])
                 with col1:
