@@ -179,8 +179,23 @@ def input_keep_records() -> List[int]:
     """保持するレコードを選択"""
     if "removed_df_with_checkbox" not in st.session_state:
         st.session_state.removed_df_with_checkbox = st.session_state.removed_df.copy()
+        
+        # 元のアップロードされたデータのカラム順序を取得
+        if "uploaded_df" in st.session_state and st.session_state.uploaded_df is not None:
+            original_columns = st.session_state.uploaded_df.columns.tolist()
+            
+            # final_cleaned_dfのカラムが元のカラムと一致するか確認
+            if set(original_columns) == set(st.session_state.removed_df_with_checkbox.columns):
+                # カラム順序を元の順序に合わせる
+                st.session_state.removed_df_with_checkbox  = st.session_state.removed_df_with_checkbox .loc[:, original_columns]
+            else:
+                # カラムが一致しない場合はログに記録
+                logger.warning("Column mismatch between original and cleaned data")
+
         st.session_state.removed_df_with_checkbox.insert(0, "Keep This Row", False)
         st.session_state.editor_key = 0
+
+
 
     edited_df = st.data_editor(
         st.session_state.removed_df_with_checkbox,

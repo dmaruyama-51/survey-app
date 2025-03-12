@@ -80,6 +80,18 @@ def render_process_data_cleaning_and_export_section(
 
                 rows_to_keep = input_keep_records()
                 final_cleaned_df = disaply_final_dataset(rows_to_keep)
+                
+                # 元のアップロードされたデータのカラム順序を取得
+                if "uploaded_df" in st.session_state and st.session_state.uploaded_df is not None:
+                    original_columns = st.session_state.uploaded_df.columns.tolist()
+                    
+                    # final_cleaned_dfのカラムが元のカラムと一致するか確認
+                    if set(original_columns) == set(final_cleaned_df.columns):
+                        # カラム順序を元の順序に合わせる
+                        final_cleaned_df = final_cleaned_df[original_columns]
+                    else:
+                        # カラムが一致しない場合はログに記録
+                        logger.warning("Column mismatch between original and cleaned data")
 
                 col1, col2 = st.columns([1, 4])
                 with col1:
