@@ -3,7 +3,7 @@ from typing import List, Tuple
 import pandas as pd
 import streamlit as st
 
-from src.core.data_loading import load_and_validate_csv, load_sample_data
+from src.core.data_loading import load_and_validate_csv, load_sample_data, load_and_validate_excel
 from src.core.dataframe_operation import split_dataframe
 from src.interface.state import save_uploaded_data
 from src.utils.logger_config import logger
@@ -16,7 +16,7 @@ from src.utils.logger_config import logger
 def input_file_upload() -> pd.DataFrame | None:
     """ファイルアップロードUIを表示"""
     try:
-        st.markdown("#### Upload CSV File")
+        st.markdown("#### Upload CSV or Excel File")
 
         # 既存のデータがある場合、クリアオプションを表示
         if st.session_state.uploaded_df is not None:
@@ -43,11 +43,23 @@ def input_file_upload() -> pd.DataFrame | None:
 
         # ファイルアップロードオプション
         uploaded_file = st.file_uploader(
-            "Choose a CSV file", type="csv", key="file_uploader"
+            "Choose a CSV or Excel file", 
+            type=["csv", "xlsx", "xls"], 
+            key="file_uploader"
         )
 
         if uploaded_file is not None:
-            df = load_and_validate_csv(uploaded_file)
+            # ファイル拡張子に基づいて適切な読み込み関数を選択
+            file_extension = uploaded_file.name.split('.')[-1].lower()
+            
+            if file_extension == 'csv':
+                df = load_and_validate_csv(uploaded_file)
+            elif file_extension in ['xlsx', 'xls']:
+                df = load_and_validate_excel(uploaded_file)
+            else:
+                st.error("Unsupported file format.")
+                return None
+                
             if df is not None:
                 st.success("File successfully uploaded and validated!")
                 save_uploaded_data(df, is_sample=False)

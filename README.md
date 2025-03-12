@@ -10,6 +10,10 @@ The application is accessible at [here](https://survey-app-1037219502389.asia-no
 
 ## Features
 
+### Data Import Options
+1. **Multiple File Formats**: Supports both CSV and Excel (.xlsx, .xls) file formats for data import.
+2. **Sample Data**: Option to use built-in sample data for testing and demonstration.
+
 ### Data Cleaning Operations
 1. **Straight-Line Response Removal**: Detects and removes responses where all answers have the same value.
 2. **Missing Values Removal**: Removes rows with missing values to ensure data integrity.

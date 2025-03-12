@@ -53,3 +53,30 @@ def load_sample_data() -> pd.DataFrame | None:
         logger.error(f"Sample data loading error: {str(e)}")
         st.error("An error occurred while loading the sample data.")
         return None
+
+
+def load_and_validate_excel(file) -> pd.DataFrame | None:
+    """
+    Excelファイルを読み込み、基本的なバリデーションを実行
+    Args:
+        file: アップロードされたファイルオブジェクト
+    Returns:
+        pd.DataFrame | None: 有効なデータフレーム、またはNone
+    """
+    try:
+        df = pd.read_excel(file, engine='openpyxl')
+
+        if df.empty:
+            st.error("The uploaded file is empty.")
+            return None
+
+        if len(df.columns) < 2:
+            st.error("The file must contain at least two columns.")
+            return None
+
+        return df
+
+    except Exception as e:
+        logger.error(f"Excel file loading error: {str(e)}")
+        st.error("An error occurred while reading the Excel file.")
+        return None
