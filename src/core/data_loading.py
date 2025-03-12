@@ -66,18 +66,21 @@ def load_and_validate_excel(file) -> pd.DataFrame | None:
     try:
         # ファイル識別子を作成（ファイル名とサイズの組み合わせ）
         file_id = f"{file.name}_{file.size}"
-        
+
         # シート名のリストを取得
-        xls = pd.ExcelFile(file, engine='openpyxl')
+        xls = pd.ExcelFile(file, engine="openpyxl")
         sheet_names = xls.sheet_names
-        
+
         # セッション状態の初期化
-        if 'excel_file_id' not in st.session_state or st.session_state.excel_file_id != file_id:
+        if (
+            "excel_file_id" not in st.session_state
+            or st.session_state.excel_file_id != file_id
+        ):
             st.session_state.excel_file_id = file_id
             st.session_state.excel_sheets = sheet_names
             st.session_state.selected_sheet = sheet_names[0]
             st.session_state.sheet_confirmed = False if len(sheet_names) > 1 else True
-        
+
         # シートが複数ある場合は選択UIを表示
         if len(sheet_names) > 1:
             col1, col2 = st.columns([3, 1])
@@ -86,25 +89,29 @@ def load_and_validate_excel(file) -> pd.DataFrame | None:
                     "Select a sheet to load:",
                     options=sheet_names,
                     index=sheet_names.index(st.session_state.selected_sheet),
-                    key="sheet_selector"
+                    key="sheet_selector",
                 )
-            
+
             with col2:
                 confirm_button = st.button("Load Selected Sheet", type="primary")
                 if confirm_button:
                     st.session_state.selected_sheet = selected_sheet
                     st.session_state.sheet_confirmed = True
-                    
+
             if not st.session_state.sheet_confirmed:
-                st.info("Please select a sheet and click 'Load Selected Sheet' to continue.")
+                st.info(
+                    "Please select a sheet and click 'Load Selected Sheet' to continue."
+                )
                 return None
         else:
             selected_sheet = sheet_names[0]
             st.info(f"Loading the only sheet: {selected_sheet}")
-        
+
         # 選択されたシートを読み込む
-        df = pd.read_excel(file, sheet_name=st.session_state.selected_sheet, engine='openpyxl')
-        
+        df = pd.read_excel(
+            file, sheet_name=st.session_state.selected_sheet, engine="openpyxl"
+        )
+
         if df.empty:
             st.error("The uploaded file is empty.")
             return None

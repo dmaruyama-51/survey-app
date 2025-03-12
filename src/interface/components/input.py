@@ -3,8 +3,11 @@ from typing import List, Tuple
 import pandas as pd
 import streamlit as st
 
-from src.core.data_loading import load_and_validate_csv, load_sample_data, load_and_validate_excel
-from src.core.dataframe_operation import split_dataframe
+from src.core.data_loading import (
+    load_and_validate_csv,
+    load_and_validate_excel,
+    load_sample_data,
+)
 from src.interface.state import save_uploaded_data
 from src.utils.logger_config import logger
 
@@ -43,23 +46,23 @@ def input_file_upload() -> pd.DataFrame | None:
 
         # ファイルアップロードオプション
         uploaded_file = st.file_uploader(
-            "Choose a CSV or Excel file", 
-            type=["csv", "xlsx", "xls"], 
-            key="file_uploader"
+            "Choose a CSV or Excel file",
+            type=["csv", "xlsx", "xls"],
+            key="file_uploader",
         )
 
         if uploaded_file is not None:
             # ファイル拡張子に基づいて適切な読み込み関数を選択
-            file_extension = uploaded_file.name.split('.')[-1].lower()
-            
-            if file_extension == 'csv':
+            file_extension = uploaded_file.name.split(".")[-1].lower()
+
+            if file_extension == "csv":
                 df = load_and_validate_csv(uploaded_file)
-            elif file_extension in ['xlsx', 'xls']:
+            elif file_extension in ["xlsx", "xls"]:
                 df = load_and_validate_excel(uploaded_file)
             else:
                 st.error("Unsupported file format.")
                 return None
-                
+
             if df is not None:
                 st.success("File successfully uploaded and validated!")
                 save_uploaded_data(df, is_sample=False)
@@ -85,13 +88,15 @@ def input_column_selection(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame
             "<div class='tight-header'><h4>Column Selection</h4></div>",
             unsafe_allow_html=True,
         )
-        st.write(
-            "Select columns for processing as numeric data"
-        )
+        st.write("Select columns for processing as numeric data")
 
         selection_mode = st.radio(
             "How would you like to select columns?",
-            ["Process all columns", "Exclude specific columns", "Include only specific columns"],
+            [
+                "Process all columns",
+                "Exclude specific columns",
+                "Include only specific columns",
+            ],
             help="Choose how you want to select columns for processing",
         )
 
@@ -102,27 +107,27 @@ def input_column_selection(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame
             # すべてのカラムを処理対象とする
             df_to_process = df.copy()
             df_not_to_process = pd.DataFrame(index=df.index)
-            
+
         elif selection_mode == "Exclude specific columns":
             # 除外するカラムを選択
-            remove_cols = st.multiselect(
+            remove_cols: List[str] = st.multiselect(
                 "Select columns to exclude",
                 df.columns,
                 help="Selected columns will be excluded from the analysis",
             )
-            
+
             # 選択されたカラムを除外
             df_to_process = df.drop(columns=remove_cols)
             df_not_to_process = df[remove_cols]
-            
+
         elif selection_mode == "Include only specific columns":
             # 含めるカラムを選択
-            include_cols = st.multiselect(
+            include_cols: List[str] = st.multiselect(
                 "Select columns to include",
                 df.columns,
                 help="Only selected columns will be included in the analysis",
             )
-            
+
             # 選択されたカラムのみを含める
             if include_cols:
                 df_to_process = df[include_cols]
@@ -134,11 +139,12 @@ def input_column_selection(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame
         # 選択結果の表示
         if not df_to_process.empty:
             st.success(f"Processing {len(df_to_process.columns)} columns")
-            
+
         return df_to_process, df_not_to_process, selection_mode
 
     except Exception as e:
         logger.error(f"Column selection error: {str(e)}")
+        st.error("An error occurred during column selection.")
         raise
 
 
@@ -179,23 +185,28 @@ def input_keep_records() -> List[int]:
     """保持するレコードを選択"""
     if "removed_df_with_checkbox" not in st.session_state:
         st.session_state.removed_df_with_checkbox = st.session_state.removed_df.copy()
-        
+
         # 元のアップロードされたデータのカラム順序を取得
-        if "uploaded_df" in st.session_state and st.session_state.uploaded_df is not None:
+        if (
+            "uploaded_df" in st.session_state
+            and st.session_state.uploaded_df is not None
+        ):
             original_columns = st.session_state.uploaded_df.columns.tolist()
-            
+
             # final_cleaned_dfのカラムが元のカラムと一致するか確認
-            if set(original_columns) == set(st.session_state.removed_df_with_checkbox.columns):
+            if set(original_columns) == set(
+                st.session_state.removed_df_with_checkbox.columns
+            ):
                 # カラム順序を元の順序に合わせる
-                st.session_state.removed_df_with_checkbox  = st.session_state.removed_df_with_checkbox .loc[:, original_columns]
+                st.session_state.removed_df_with_checkbox = (
+                    st.session_state.removed_df_with_checkbox.loc[:, original_columns]
+                )
             else:
                 # カラムが一致しない場合はログに記録
                 logger.warning("Column mismatch between original and cleaned data")
 
         st.session_state.removed_df_with_checkbox.insert(0, "Keep This Row", False)
         st.session_state.editor_key = 0
-
-
 
     edited_df = st.data_editor(
         st.session_state.removed_df_with_checkbox,
