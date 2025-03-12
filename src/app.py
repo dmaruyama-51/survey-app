@@ -13,6 +13,9 @@ def main():
     # アプリケーションの状態を初期化
     initialize_app_state()
 
+    # サイドバーの下部に問い合わせ先を追加
+    st.sidebar.markdown("✉️  Contact: dmaruyama.dev@gmail.com")
+
     home_page = st.Page(
         "contents/01_home.py", title="Home", icon=":material/home:", default=True
     )
