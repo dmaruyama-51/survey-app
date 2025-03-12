@@ -184,7 +184,7 @@ def input_keep_records() -> List[int]:
 
     edited_df = st.data_editor(
         st.session_state.removed_df_with_checkbox,
-        hide_index=True,
+        hide_index=False,
         column_config={
             "Keep This Row": st.column_config.CheckboxColumn(
                 "Keep This Row",

@@ -67,9 +67,14 @@ def render_process_data_cleaning_and_export_section(
                 )
 
             if not st.session_state.cleaned_df.empty:
-                st.markdown("#### Cleaning Results and Download")
+
+                st.markdown("#### Results and Download")
+
+                st.write("The following rows have been detected.")
+                st.dataframe(st.session_state.removed_df.loc[:, df_to_process.columns], use_container_width=True)
+                
                 st.write(
-                    "Below are the records marked for removal. Please check any rows you wish to keep. "
+                    "If there are any rows you don't want to delete, please check the rows you wish to keep."
                     "If no rows are selected, the downloaded data will exclude all records shown here."
                 )
 
