@@ -86,24 +86,56 @@ def input_column_selection(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame
             unsafe_allow_html=True,
         )
         st.write(
-            "Select columns that should not be processed as numeric data (e.g., ID, category columns)"
+            "Select columns for processing as numeric data"
         )
 
-        exclude_columns = st.radio(
-            "Would you like to exclude any columns?",
-            ["No, process all columns", "Yes, select columns to exclude"],
-            help="Choose whether to exclude specific columns from analysis",
+        selection_mode = st.radio(
+            "How would you like to select columns?",
+            ["Process all columns", "Exclude specific columns", "Include only specific columns"],
+            help="Choose how you want to select columns for processing",
         )
 
-        remove_cols: list[str] = []
-        if exclude_columns == "Yes, select columns to exclude":
+        df_to_process = pd.DataFrame()
+        df_not_to_process = pd.DataFrame()
+
+        if selection_mode == "Process all columns":
+            # すべてのカラムを処理対象とする
+            df_to_process = df.copy()
+            df_not_to_process = pd.DataFrame(index=df.index)
+            
+        elif selection_mode == "Exclude specific columns":
+            # 除外するカラムを選択
             remove_cols = st.multiselect(
                 "Select columns to exclude",
                 df.columns,
-                help="You can select multiple columns. Selected columns will be excluded from the analysis.",
+                help="Selected columns will be excluded from the analysis",
             )
+            
+            # 選択されたカラムを除外
+            df_to_process = df.drop(columns=remove_cols)
+            df_not_to_process = df[remove_cols]
+            
+        elif selection_mode == "Include only specific columns":
+            # 含めるカラムを選択
+            include_cols = st.multiselect(
+                "Select columns to include",
+                df.columns,
+                help="Only selected columns will be included in the analysis",
+            )
+            
+            # 選択されたカラムのみを含める
+            if include_cols:
+                df_to_process = df[include_cols]
+                df_not_to_process = df.drop(columns=include_cols)
+            else:
+                st.warning("Please select at least one column to include")
+                df_not_to_process = df.copy()
 
-        return *split_dataframe(df, remove_cols), exclude_columns
+        # 選択結果の表示
+        if not df_to_process.empty:
+            st.success(f"Processing {len(df_to_process.columns)} columns")
+            
+        return df_to_process, df_not_to_process, selection_mode
 
     except Exception as e:
         logger.error(f"Column selection error: {str(e)}")
